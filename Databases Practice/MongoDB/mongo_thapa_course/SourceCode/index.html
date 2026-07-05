@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!-- /////////////////////////////////Commond For MongoDB/////////////////////////// -->
+    (1)mongod --version
+    (2)mongosh
+    (3)show dbs
+    (4)use <databaseName>
+    (5)show collections
+    (6)db.createCollection('<collection-name>’);
+    (7)db.createCollection('Database Name');
+    (8)db.<collection-name>.drop();
+    (9).exit
+    (10)use "database name for specfic document"
+    (11)db.data.insertOne({'name':'vinod', age: 26});
+    (12)db.data.insertMany([{'name':'vinod', age: 26}, {'name':'vinod', age: 26}, {'name':'vinod', age: 26}]);
+    (13)db.data.find();
+    (14)db.data.find({'name':'vinod'});
+    (15)db.data.findOne({'name':'vinod'});
+
+
+    <!-- Importing JSON in mongodb -->
+    //If I want to insert multiple collections with collections error
+    (16)mongoimport jsonfile.json –d database_name –c collection_name
+    //shop db name  products documents ha 
+    (17)mongoimport D:\AlamProgrammingPractice\MongoDB\mongo_thapa_course\SourceCode\products.json -d shop -c products
+    (18)mongoexport -d shop -c sales -o D:\AlamProgrammingPractice\MongoDB\mongo_thapa_course\SourceCode\salestest.json
+    (17)mongoimport products.json -d shop -c products
+    (18)mongoimport products.json -d shop -c products --jsonArray
+    Here, --jsonArray accepts the import of data expressed with multiple MongoDB documents within a single JSON array.
+    (16)>mongoimport --uri=mongodb://localhost:27017/shop --collection=sales --file="D:\Newton\MongoDB\Thapa
+    (17)db.products.find()
+    (18)db.products.find({'price': {$eq: 79}}).count();
+    (18)db.products.find({'price': {$ne: 79}}).count();
+    (18)db.products.find({'price': {$gte: 79}}).count();
+    (18)db.products.find({'price': {$gt: 79}}).count();
+    (18)db.products.find({'price': {$lt: 79}}).count();
+    (19)db.products.find({'price': {$in: [699, 129, 69]}}).count();
+    (20)db.products.find({'price': {$nin: [699, 129, 69]}}).count();
+    (21)db.products.find({'price': {$gt:1250}}).limit(3).sort({'price':1});
+    (22)
+
+
+    <!-- Cursor Methods -->
+    (1)count();
+    (2)limit();
+    (3)skip();
+    (4)sort();
+    (6) db.products.find({'price': {$in: [699, 129, 69]}}).limit(2).skip(1)
+    (7)db.products.find({'price': {$in: [699, 129, 69]}}).limit(5).sort({'price':1});
+    (8) db.products.find({$and: [{'price': {$gt: 100}}, {'name': 'Diamond Ring'}]});
+    (9) db.products.find({'price': {$gt: 100}, 'name': 'Diamond Ring'});
+    (10)db.products.find({$or: [{'price': {$gt: 2000}}, {'name': 'Diamond Ring'}]});
+    (11)db.products.find({$nor: [{'price': {$gt: 2000}}, {'name': 'Diamond Ring'}]}).count();
+    (12)db.products.find({'price': {$not: {$eq:100}}}).count();
+    (13)db.products.find({$expr: {$gt: ['$price', 1340]}})//find sales where (quantity * price) is greater than targetPrice;
+
+    <!-- Complex Expressions -->
+    <!-- The $expr operator allows using aggregation expressions within a query.
+    Useful when you need to compare fields from the same document in a more complex manner -->
+    (1)db.sales.find({$expr: {$gt: [{$multiply:['$quantity', '$price']}, '$targetPrice']}});
+    
+    
+    <!-- Elements Operator -->
+    (1)$exits: 
+    (2)$type:
+    (3)$size:n 
+    (4)db.products.find({ price: { $exists: true } }).count();
+    (5)db.products.find({ price: { $exists: true },cls price: { $gt: 1250 } });
+    (6) db.comments.find({'comments': {$size:4}});
+    (7)db.products.find({ price: { $type: "number" } }).count();
+
+
+    <!-- Projection -->
+    (1) db.comments.find({'comments': {$size:2}}, {comments: 1});
+    (2) db.comments.find({'comments': {$size:2}}, {comments: 0});
+    (3)db.comments.find({'comments': {$size:2}}, {comments: 1, _id:0});
+    (4)db.comments.find({'comments': {$size:2}}, {title: 1, _id:0});
+    (5)db.comments.find({'comments': {$size:2}}, {title:1, author: 0, _id:0})
+    (6)db.comments.find({'comments': {$size:2}}, {title:1, author: 1, _id:0})
+
+    <!-- Embedded Documents -->
+    (1)db.comments.find({'comments.user':'Lily'});
+    (2)db.comments.find({'metadata.views': {$gt:1200}});
+    (3)db.comments.find({ 'comments.user':'Henry' , 'metadata.likes':{$gt: 50}  })
+    (4)db.comments.find({ "comments.user": { $all: ["Alice", "Vinod"] } });
+    (5)db.comments.find({'comments.user': {$all: ['Alice','Vinod','Bob']}});
+    (6)db.comments.find({ comments: {$elemMatch: {'user':'Alice' , 'text':'Awesome article!'}}});
+    (7)db.comments.find({ 'comments.user':'Alice' , 'comments.text':'Awesome article!'});
+
+     <!-- updateOne And updateMany -->
+     (1)db.products.updateOne({_id:ObjectId("64c2363be32f4a51b19b9279")}, {$set:{'price': 45}});
+     (2)db.products.updateOne({name: 'Designer Handbag'}, {$set:{'isFeatured': false}})
+     (3) db.products.updateMany({price: 120}, {$set:{'isFeatured': true}});
+
+     <!-- Removing and Renaming Fields -->
+     (1)db.products.updateOne({price: 123}, {$rename:{'isFeatured': 'isFeature'}})
+     (2)db.products.updateOne({price: 123}, {$unset:{'isFeatured': 1}})
+
+    <!-- Updating arrays and Embedded Documents -->
+      (1)db.products.updateOne({_id:ObjectId('64c23601e32f4a51b19b9264')},{$set: {'user': "Alam"}});
+      (2)db.products.updateOne({_id:ObjectId('64c23601e32f4a51b19b9264')},{$unset: {'user': 1}});
+      
+     <!-- Indexes in MongoDB -->
+     (1)db.products.updateOne({_id:ObjectId('64c23601e32f4a51b19b9264')},{$push: {comments: {'user': 'Eva', text:"Subscribe to my Channel"}}});
+     (2)db.products.updateOne({_id:ObjectId('64c23601e32f4a51b19b9264')},{$pop: {comments: 1}});
+     (3)db.products.find({_id:ObjectId('64c23601e32f4a51b19b9264'), 'comments.user':"Eva"});
+     (4)db.products.updateOne({_id:ObjectId('64c23601e32f4a51b19b9264'), 'comments.user':"Eva"}, {$set:{'comments.$.text':"AwesomeThapa"}});
+     (5)db.find.updateOne({_id:6}, {$unset: {metadata: 1}});
+     (6)db.find.deleteMany({price:55});
+
+     <!--  What are Indexes -->
+     <!-- Indexes are specialized data structures that optimize data retrieval speed in MongoDB -->
+     (1)db.products.find({price:{$gt:100}}).explain();
+     (2)db.products.find({price:{$gt:100}});
+     (3)db.products.find({price:{$gt:100}}).explain('executionStats');
+
+    <!-- explain() -->
+     <!-- Use explain() method to understand query execution in detail -->
+     (1)db.products.explain('executionStats').find({'name':'Alice'})
+     (2)db.products.explain('executionStats').find({'name':'Air Fryer'})
+      <!-- Getting Indexes -->
+      (1) db.products.getIndexes();
+      (2)Did you realize that _id is already there? _id is automatically added by mongodb and it’s a default unique index.
+      (3)db.products.createIndex({'name':1});
+      (4)db.products.explain('executionStats').find({'name': 'Air Fryer'});
+      (5)db.products.dropIndex({name:1});
+      (6)db.products.getIndexes();
+      <!-- Removing an index -->
+      (7) db.products.dropIndex({ name: 1 });
+       <!-- Creating a unique index -->
+      (8)db.users.createIndex({ email: 1 }, { unique: true });
+      (9)db.products.find({ name: { $regex: "Wireless Gaming Mouse" }});
+
+      <!-- When not to use Indexes? -->
+      (1)db.products.explain('executionStats').find({price:{$gt:2}});
+ 
+
+
+      <!-- Aggregation -->
+      <!-- Definition: Aggregation is the process of performing transformations on documents and combining them to produce computed results.
+      Pipeline Stages: Aggregations consist of multiple pipeline stages, each performing a specific operation on the input data.
+      #Benefits
+      (1)Aggregating Data: Complex calculations and operations are possible.
+      (2)Advanced Transformations: Data can be combined, reshaped, and computed for insights.
+      (3)Efficient Processing: Aggregation handles large datasets efficiently -->
+
+
+
+      <!-- ////////Server -->
+      <!-- mongodump -d frisbee_db -->
+</body>
+ 
+</html>
