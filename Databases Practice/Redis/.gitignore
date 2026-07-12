@@ -1,0 +1,31 @@
+# Private keys and secrets
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+*.priv
+*.secret
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+
+# Environment files
+.env
+.env.*
+
+# SSH directory
+.ssh/
+
+# Dependency and build folders
+node_modules/
+vendor/
+venv/
+.env/
+__pycache__/
+dist/
+build/
+out/
+coverage/
