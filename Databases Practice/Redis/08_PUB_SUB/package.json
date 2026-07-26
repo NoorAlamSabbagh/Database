@@ -1,0 +1,19 @@
+{
+  "name": "07_bullMq",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node src/api.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bullmq": "^5.80.8",
+    "express": "^5.2.1",
+    "ioredis": "^5.11.1"
+  }
+}
