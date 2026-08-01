@@ -106,23 +106,23 @@
 
 //<================Lec(2)======================>
 //<================Lec(4)======================>
-(1)show dbs
-(2)use database_name
-(3)db.dropDatabase()
-(4)db.createCollection("collection_name");
-(5)db.old_name.renameCollection("New Name");
-(6)db.collection_name.drop();
-(7)show collections
-(8)db.help();
-(9)db.collection_name.help();
+// (1)show dbs
+// (2)use database_name
+// (3)db.dropDatabase()
+// (4)db.createCollection("collection_name");
+// (5)db.old_name.renameCollection("New Name");
+// (6)db.collection_name.drop();
+// (7)show collections
+// (8)db.help();
+// (9)db.collection_name.help();
 
-//<================Lec(5)======================>
-(1)db.collection_name.insertOne({field1: "Value", field2: "Value"});
-(2)db.collection_name.insertMany([
-    ({field1: "Value", field2: "Value"}),
-    ({field1: "Value", field2: "Value"})
-])
-(3)db.collection_name.find();
+// //<================Lec(5)======================>
+// (1)db.collection_name.insertOne({field1: "Value", field2: "Value"});
+// (2)db.collection_name.insertMany([
+//     ({field1: "Value", field2: "Value"}),
+//     ({field1: "Value", field2: "Value"})
+// ])
+// (3)db.collection_name.find();
 
 //<================Lec(6)======================>
 // MongoDB stores data in BSON (Binary JSON), which supports more data types than regular JSON.
@@ -275,3 +275,14 @@
 // ## Interview Answer (One Statement)
 // > MongoDB uses BSON data types such as String, Number, Boolean, Array, Object, ObjectId, Date, Null, Binary, Regular Expression, Timestamp, JavaScript, and Decimal128. In day-to-day development, the most commonly used types are String, Number, Boolean, Array, Object, ObjectId, and Date.
 
+// <================Lecture(7) MongoDB JSON Schema Validation======================>
+
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
+// <================Lecture(7)======================>
