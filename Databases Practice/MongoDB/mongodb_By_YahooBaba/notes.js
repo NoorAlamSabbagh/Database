@@ -276,8 +276,141 @@
 // > MongoDB uses BSON data types such as String, Number, Boolean, Array, Object, ObjectId, Date, Null, Binary, Regular Expression, Timestamp, JavaScript, and Decimal128. In day-to-day development, the most commonly used types are String, Number, Boolean, Array, Object, ObjectId, and Date.
 
 // <================Lecture(7) MongoDB JSON Schema Validation======================>
+// validator: {
+//   $jsonSchema: {
+//     bsonType: "object",
+//     required: ["name", "salary", "department"],
+//     properties: {
+//       name: {
+//         bsonType: "string"
+//       },
+//       salary: {
+//         bsonType: "double"
+//       },
+//       department: {
+//         enum: ["HR", "IT", "Finance"]
+//       }
+//     }
+//   }
+// }
 
-// <================Lecture(7)======================>
+
+// //
+// db.createCollection("students", {
+//   validator: {
+//     $jsonSchema: {
+//       bsonType: "object",
+//       title: "Student Object Validation",
+//       required: ["name", "age", "course"],
+//       properties: {
+//         name: {
+//           bsonType: "string",
+//           description: "Name must be a string and is required",
+//           minLength: 3,
+//           maxLength: 50
+//         },
+//         age: {
+//           bsonType: "int",
+//           description: "Age must be an integer and is required",
+//           minimum: 18,
+//           maximum: 60
+//         },
+//         course: {
+//           bsonType: "string",
+//           description: "Course must be a string and is required",
+//           enum: ["MERN", "Java", "Python", "Data Science"]
+//         },
+//         email: {
+//           bsonType: "string",
+//           description: "Email must be a valid string",
+//           pattern: "^.+@.+\\..+$"
+//         },
+//         isActive: {
+//           bsonType: "bool",
+//           description: "isActive must be true or false"
+//         },
+//         createdAt: {
+//           bsonType: "date",
+//           description: "Created date must be a valid date"
+//         }
+//       }
+//     }
+//   },
+//   validationLevel: "strict",
+//   validationAction: "error"
+// });
+
+// <================Lecture(8)=MongoDB Update & Replace Documents=====================>
+#MongoDB Update & Replace Commands
+1. updateOne()
+Updates the first matching document.
+Syntax:
+db.collection.updateOne(
+  { filter },
+  { $set: { field: value } }
+)
+
+Example:
+db.students.updateOne(
+  { name: "Noor" },
+  { $set: { age: 30 } }
+);
+
+✅ Updates only the first matching document.
+2. updateMany()
+Updates all matching documents.
+Syntax:
+db.collection.updateMany(
+  { filter },
+  { $set: { field: value } }
+)
+Example:
+db.students.updateMany(
+  { course: "MERN" },
+  { $set: { isActive: true } }
+);
+✅ Updates all students with the `MERN` course.
+3. `replaceOne()`
+Replaces the entire document (except `_id`).
+Syntax:
+db.collection.replaceOne(
+  { filter },
+  { newDocument }
+)
+Example:
+db.students.replaceOne(
+  { name: "Noor" },
+  {
+    name: "Noor Alam",
+    age: 29,
+    course: "MERN",
+    email: "noor@gmail.com"
+  }
+);
+⚠️ All old fields (except `_id`) are removed if they are not included in the new document.
+Update vs Replace
+
+| Feature                                | `updateOne()` | `replaceOne()`                      |
+| -------------------------------------- | ------------- | ----------------------------------- |
+| Updates specific fields                | ✅ Yes         | ❌ No                                |
+| Replaces entire document               | ❌ No          | ✅ Yes                               |
+| Uses update operators (`$set`, `$inc`) | ✅ Yes         | ❌ No                                |
+| Keeps existing fields                  | ✅ Yes         | ❌ Removes fields not in replacement |
+
+#Common Update Operators
+| Operator    | Purpose                                     | Example                              |
+| ----------- | ------------------------------------------- | ------------------------------------ |
+| `$set`      | Set/update a field                          | `{ $set: { age: 30 } }`              |
+| `$unset`    | Remove a field                              | `{ $unset: { phone: "" } }`          |
+| `$inc`      | Increment a number                          | `{ $inc: { marks: 5 } }`             |
+| `$mul`      | Multiply a number                           | `{ $mul: { salary: 2 } }`            |
+| `$rename`   | Rename a field                              | `{ $rename: { phone: "mobile" } }`   |
+| `$push`     | Add to an array                             | `{ $push: { skills: "MongoDB" } }`   |
+| `$pull`     | Remove from an array                        | `{ $pull: { skills: "Java" } }`      |
+| `$addToSet` | Add to an array only if not already present | `{ $addToSet: { skills: "React" } }` |
+## Interview Answer
+>`updateOne()` updates specific fields in the first matching document, `updateMany()` updates all matching documents, and `replaceOne()` replaces the entire document (except `_id`) with a new one. `update` commands use operators like `$set`, while `replaceOne()` requires a complete replacement document.
+
 // <================Lecture(7)======================>
 // <================Lecture(7)======================>
 // <================Lecture(7)======================>
