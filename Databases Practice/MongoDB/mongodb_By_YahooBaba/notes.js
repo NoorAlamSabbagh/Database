@@ -341,78 +341,145 @@
 // });
 
 // <================Lecture(8)=MongoDB Update & Replace Documents=====================>
-#MongoDB Update & Replace Commands
-1. updateOne()
-Updates the first matching document.
-Syntax:
-db.collection.updateOne(
-  { filter },
-  { $set: { field: value } }
-)
+// #MongoDB Update & Replace Commands
+// 1. updateOne()
+// Updates the first matching document.
+// Syntax:
+// db.collection.updateOne(
+//   { filter },
+//   { $set: { field: value } }
+// )
 
-Example:
-db.students.updateOne(
-  { name: "Noor" },
-  { $set: { age: 30 } }
-);
+// Example:
+// db.students.updateOne(
+//   { name: "Noor" },
+//   { $set: { age: 30 } }
+// );
 
-✅ Updates only the first matching document.
-2. updateMany()
-Updates all matching documents.
-Syntax:
-db.collection.updateMany(
-  { filter },
-  { $set: { field: value } }
-)
-Example:
-db.students.updateMany(
-  { course: "MERN" },
-  { $set: { isActive: true } }
-);
-✅ Updates all students with the `MERN` course.
-3. `replaceOne()`
-Replaces the entire document (except `_id`).
-Syntax:
-db.collection.replaceOne(
-  { filter },
-  { newDocument }
-)
-Example:
-db.students.replaceOne(
-  { name: "Noor" },
-  {
-    name: "Noor Alam",
-    age: 29,
-    course: "MERN",
-    email: "noor@gmail.com"
-  }
-);
-⚠️ All old fields (except `_id`) are removed if they are not included in the new document.
-Update vs Replace
+// ✅ Updates only the first matching document.
+// 2. updateMany()
+// Updates all matching documents.
+// Syntax:
+// db.collection.updateMany(
+//   { filter },
+//   { $set: { field: value } }
+// )
+// Example:
+// db.students.updateMany(
+//   { course: "MERN" },
+//   { $set: { isActive: true } }
+// );
+// ✅ Updates all students with the `MERN` course.
+// 3. `replaceOne()`
+// Replaces the entire document (except `_id`).
+// Syntax:
+// db.collection.replaceOne(
+//   { filter },
+//   { newDocument }
+// )
+// Example:
+// db.students.replaceOne(
+//   { name: "Noor" },
+//   {
+//     name: "Noor Alam",
+//     age: 29,
+//     course: "MERN",
+//     email: "noor@gmail.com"
+//   }
+// );
+// ⚠️ All old fields (except `_id`) are removed if they are not included in the new document.
+// Update vs Replace
 
-| Feature                                | `updateOne()` | `replaceOne()`                      |
-| -------------------------------------- | ------------- | ----------------------------------- |
-| Updates specific fields                | ✅ Yes         | ❌ No                                |
-| Replaces entire document               | ❌ No          | ✅ Yes                               |
-| Uses update operators (`$set`, `$inc`) | ✅ Yes         | ❌ No                                |
-| Keeps existing fields                  | ✅ Yes         | ❌ Removes fields not in replacement |
+// | Feature                                | `updateOne()` | `replaceOne()`                      |
+// | -------------------------------------- | ------------- | ----------------------------------- |
+// | Updates specific fields                | ✅ Yes         | ❌ No                                |
+// | Replaces entire document               | ❌ No          | ✅ Yes                               |
+// | Uses update operators (`$set`, `$inc`) | ✅ Yes         | ❌ No                                |
+// | Keeps existing fields                  | ✅ Yes         | ❌ Removes fields not in replacement |
 
-#Common Update Operators
-| Operator    | Purpose                                     | Example                              |
-| ----------- | ------------------------------------------- | ------------------------------------ |
-| `$set`      | Set/update a field                          | `{ $set: { age: 30 } }`              |
-| `$unset`    | Remove a field                              | `{ $unset: { phone: "" } }`          |
-| `$inc`      | Increment a number                          | `{ $inc: { marks: 5 } }`             |
-| `$mul`      | Multiply a number                           | `{ $mul: { salary: 2 } }`            |
-| `$rename`   | Rename a field                              | `{ $rename: { phone: "mobile" } }`   |
-| `$push`     | Add to an array                             | `{ $push: { skills: "MongoDB" } }`   |
-| `$pull`     | Remove from an array                        | `{ $pull: { skills: "Java" } }`      |
-| `$addToSet` | Add to an array only if not already present | `{ $addToSet: { skills: "React" } }` |
-## Interview Answer
->`updateOne()` updates specific fields in the first matching document, `updateMany()` updates all matching documents, and `replaceOne()` replaces the entire document (except `_id`) with a new one. `update` commands use operators like `$set`, while `replaceOne()` requires a complete replacement document.
+// #Common Update Operators
+// | Operator    | Purpose                                     | Example                              |
+// | ----------- | ------------------------------------------- | ------------------------------------ |
+// | `$set`      | Set/update a field                          | `{ $set: { age: 30 } }`              |
+// | `$unset`    | Remove a field                              | `{ $unset: { phone: "" } }`          |
+// | `$inc`      | Increment a number                          | `{ $inc: { marks: 5 } }`             |
+// | `$mul`      | Multiply a number                           | `{ $mul: { salary: 2 } }`            |
+// | `$rename`   | Rename a field                              | `{ $rename: { phone: "mobile" } }`   |
+// | `$push`     | Add to an array                             | `{ $push: { skills: "MongoDB" } }`   |
+// | `$pull`     | Remove from an array                        | `{ $pull: { skills: "Java" } }`      |
+// | `$addToSet` | Add to an array only if not already present | `{ $addToSet: { skills: "React" } }` |
+// ## Interview Answer
+// >`updateOne()` updates specific fields in the first matching document, `updateMany()` updates all matching documents, and `replaceOne()` replaces the entire document (except `_id`) with a new one. `update` commands use operators like `$set`, while `replaceOne()` requires a complete replacement document.
 
-// <================Lecture(7)======================>
-// <================Lecture(7)======================>
+// <================Lecture(9)Delete======================>
+// MongoDB provides two main delete methods:
+// 1. `deleteOne()`
+// 2. `deleteMany()`
+// 1. Delete One Document
+
+// Deletes the first matching document
+// Syntax
+// db.collection.deleteOne({ filter })
+// #Example
+// Delete a student by name:
+// db.students.deleteOne({
+//   name: "Noor Alam"
+// });
+// Or delete by `_id`:
+// db.students.deleteOne({
+//   _id: ObjectId("6a6d5a4d7d401e10d0f7942b")
+// });
+
+// Output:
+// {
+//   acknowledged: true,
+//   deletedCount: 1
+// }
+// # 2. Delete Multiple Documents
+// Deletes all matching documents.
+// #Syntax
+// db.collection.deleteMany({ filter })
+
+// Delete all MERN students:
+// db.students.deleteMany({
+//   course: "MERN"
+// });
+
+// Output:
+// {
+//   acknowledged: true,
+//   deletedCount: 5
+// }
+
+// # 3. Delete All Documents
+// Deletes every document in the collection but keeps the collection.
+// db.students.deleteMany({})
+
+// # 4. Drop the Entire Collection
+// Deletes the collection and all its documents.
+
+// db.students.drop()
+// # Difference
+
+// | Command          | What it does                                |
+// | ---------------- | ------------------------------------------- |
+// | `deleteOne()`    | Deletes the first matching document         |
+// | `deleteMany()`   | Deletes all matching documents              |
+// | `deleteMany({})` | Deletes all documents, keeps the collection |
+// | `drop()`         | Deletes the entire collection               |
+// ## Verify
+
+// After deleting, check the remaining data:
+// db.students.find()
+
+// Count documents
+// db.students.countDocuments()
+// #Interview Answer
+// >`deleteOne()` removes the first matching document, while `deleteMany()` removes all matching documents. 
+// If you use `deleteMany({})`, all documents are deleted but the collection remains. To remove the collection itself, use `drop()`.
+
+// <================Lecture(10)Find Document======================>
+
 // <================Lecture(7)======================>
 // <================Lecture(7)======================>
 // <================Lecture(7)======================>
