@@ -15,3 +15,11 @@
 // write-heavy workloads.
 // 5. Limited Querying: Redis does not support complex querying like traditional relational databases, 
 // which can limit its use cases.
+
+// Redis vs Memcached
+// Redis is the more capable choice for most apps. Both Redis and Memcached are in-memory stores, but Redis goes beyond simple string caching with rich data structures, built-in persistence, and clustering:
+// Rich data structures beyond simple strings (Lists, Sets, Hashes, Sorted Sets, Streams, JSON)
+// Built-in persistence so data survives restarts
+// Pub/Sub messaging for real-time communication
+// Lua scripting for server-side logic
+// Cluster mode for horizontal scaling with automatic sharding
