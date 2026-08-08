@@ -479,9 +479,184 @@
 // If you use `deleteMany({})`, all documents are deleted but the collection remains. To remove the collection itself, use `drop()`.
 
 // <================Lecture(10)Find Document======================>
+// ## MongoDB `find()` — Short Notes
+// Assume collection:
+// db.students
+// | Method / Operator  | Example                                        | Meaning                        |
+// | ------------------ | ---------------------------------------------- | ------------------------------ |
+// | `find()`           | `db.students.find()`                           | Find all documents             |
+// | `findOne()`        | `db.students.findOne()`                        | Find first document            |
+// | Filter             | `db.students.find({age: 29})`                  | Find matching documents        |
+// | `$gt`              | `find({age: {$gt: 25}})`                       | Greater than                   |
+// | `$gte`             | `find({age: {$gte: 25}})`                      | Greater than/equal             |
+// | `$lt`              | `find({age: {$lt: 30}})`                       | Less than                      |
+// | `$lte`             | `find({age: {$lte: 30}})`                      | Less than/equal                |
+// | `$eq`              | `find({age: {$eq: 29}})`                       | Equal                          |
+// | `$ne`              | `find({age: {$ne: 29}})`                       | Not equal                      |
+// | `$in`              | `find({course: {$in:["MERN","Java"]}})`        | Matches any value              |
+// | `$nin`             | `find({course: {$nin:["MERN","Java"]}})`       | Doesn't match values           |
+// | `$and`             | `find({$and:[{age:29},{course:"MERN"}]})`      | Both conditions                |
+// | `$or`              | `find({$or:[{age:29},{course:"MERN"}]})`       | Either condition               |
+// | `$exists`          | `find({phone: {$exists:true}})`                | Field exists                   |
+// | `$regex`           | `find({name: {$regex:"^Noor"}})`               | Pattern matching               |
+// | `$size`            | `find({skills: {$size:3}})`                    | Array size                     |
+// | `$elemMatch`       | `find({skills: {$elemMatch:{$eq:"MongoDB"}}})` | Match array element            |
+// | Nested field       | `find({"address.city":"Bangalore"})`           | Search nested field            |
+// | `_id`              | `find({_id:ObjectId("...")})`                  | Find by ID                     |
+// | `sort()`           | `find().sort({age:1})`                         | `1` ascending, `-1` descending |
+// | `limit()`          | `find().limit(5)`                              | Return first 5                 |
+// | `skip()`           | `find().skip(5)`                               | Skip first 5                   |
+// | `countDocuments()` | `countDocuments({age:29})`                     | Count matching documents       |
+// | `distinct()`       | `distinct("course")`                           | Get unique values              |
 
-// <================Lecture(7)======================>
-// <================Lecture(7)======================>
+// ## Projection Short Notes
+// Projection = Decide which fields to show.
+// db.students.find(
+//   {},
+//   {name: 1, age: 1, _id: 0}
+// )
+// | Projection             | Meaning                  |
+// | ---------------------- | ------------------------ |
+// | `{name: 1}`            | Include `name`           |
+// | `{name: 1, age: 1}`    | Include `name`, `age`    |
+// | `{name: 1, _id: 0}`    | Include name, exclude ID |
+// | `{email: 0}`           | Exclude email            |
+// | `{email: 0, phone: 0}` | Exclude email and phone  |
+
+// ### Important
+// 1 = INCLUDE
+// 0 = EXCLUDE
+// Don't normally mix `1` and `0`, except `_id`.
+
+// ## Useful Combination
+// db.students
+//   .find(
+//     {age: {$gte: 18}},
+//     {name: 1, course: 1, _id: 0}
+//   )
+//   .sort({age: -1})
+//   .skip(5)
+//   .limit(10)
+// Meaning:
+// >Find students age 18+, show only name/course, sort by age descending, skip 5, and return 10.
+
+// <================Lecture(11)Comparison Operators======================>
+// ## MongoDB Comparison Operators — Short Notes
+// Comparison operators are used to **compare values** in a query.
+
+// Assume:
+// db.students.find()
+// | Operator | Meaning                 | Example                                  |
+// | -------- | ----------------------- | ---------------------------------------- |
+// | `$eq`    | Equal to                | `{ age: { $eq: 29 } }`                   |
+// | `$ne`    | Not equal to            | `{ age: { $ne: 29 } }`                   |
+// | `$gt`    | Greater than            | `{ age: { $gt: 25 } }`                   |
+// | `$gte`   | Greater than or equal   | `{ age: { $gte: 25 } }`                  |
+// | `$lt`    | Less than               | `{ age: { $lt: 30 } }`                   |
+// | `$lte`   | Less than or equal      | `{ age: { $lte: 30 } }`                  |
+// | `$in`    | Matches any value       | `{ course: { $in: ["MERN", "Java"] } }`  |
+// | `$nin`   | Doesn't match any value | `{ course: { $nin: ["MERN", "Java"] } }` |
+
+// # Examples
+// 1.Equal
+// db.students.find({ age: { $eq: 29 } })
+// 2. Not equal
+// db.students.find({ age: { $ne: 29 } })
+// 3. Greater than
+// db.students.find({ age: { $gt: 25 } })
+// 4. Greater than or equal
+// db.students.find({ age: { $gte: 25 } })
+// 5. Less than
+// db.students.find({ age: { $lt: 30 } })
+// 6. Less than or equal
+// db.students.find({ age: { $lte: 30 } })
+
+// 7. `$in`
+// db.students.find({
+//   course: { $in: ["MERN", "Java"] }
+// })
+// Means:
+// 8. `$nin`
+// db.students.find({
+//   course: { $nin: ["MERN", "Java"] }
+// })
+// ### Easy Memory Trick
+// $eq   → =
+// $ne   → ≠
+// $gt   → >
+// $gte  → ≥
+// $lt   → <
+// $lte  → ≤
+// $in   → OR from a list
+// $nin  → NOT in a list
+
+// <================Lecture(12)Logic Operators======================>
+// ## MongoDB Logical Operators — Short Notes
+// Logical operators are used to combine multiple conditions.
+// | Operator | Meaning                                   | Example                                   |
+// | -------- | ----------------------------------------- | ----------------------------------------- |
+// | `$and`   | All conditions must be true           | `{ $and: [{age: 29}, {course: "MERN"}] }` |
+// | `$or`    | At least one condition must be true   | `{ $or: [{age: 29}, {course: "MERN"}] }`  |
+// | `$nor`   | None of the conditions should be true | `{ $nor: [{age: 29}, {course: "MERN"}] }` |
+// | `$not`   | Negates a condition                   | `{ age: { $not: { $gt: 29 } } }`          |
+
+// # 1. `$and`
+// Both conditions must match:
+// db.students.find({
+//   $and: [
+//     { age: 29 },
+//     { course: "MERN" }
+//   ]
+// })
+
+// Meaning: age = 29 AND course = MERN.
+// You can usually write this more simply:
+// db.students.find({
+//   age: 29,
+//   course: "MERN"
+// })
+
+// ### 2. `$or`
+// At least one condition must match:
+// db.students.find({
+//   $or: [
+//     { age: 29 },
+//     { course: "MERN" }
+//   ]
+// })
+
+// Meaning: age = 29 OR course = MERN.
+// ### 3. `$nor`
+
+// None of the conditions should match:
+// db.students.find({
+//   $nor: [
+//     { age: 29 },
+//     { course: "MERN" }
+//   ]
+// })
+
+// Meaning: age is not 29 **AND** course is not MERN.
+// # 4. `$not`
+
+// Reverses a condition:
+// db.students.find({
+//   age: {
+//     $not: { $gt: 29 }
+//   }
+// })
+
+// Meaning: age is NOT greater than 29.
+// $gt  → >
+// $not + $gt → NOT >
+
+// ### Easy Memory Trick
+// $and → BOTH
+// $or  → ANY ONE
+// $nor → NONE
+// $not → OPPOSITE
+
+
 // <================Lecture(7)======================>
 // <================Lecture(7)======================>
 // <================Lecture(7)======================>
