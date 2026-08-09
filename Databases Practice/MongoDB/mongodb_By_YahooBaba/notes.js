@@ -657,7 +657,216 @@
 // $not → OPPOSITE
 
 
-// <================Lecture(7)======================>
-// <================Lecture(7)======================>
-// <================Lecture(7)======================>
-// <================Lecture(7)======================>
+// <================Lecture(13)Query Operators======================>
+// ## MongoDB Query Operators
+// #1. Comparison Operators
+
+// Used to compare values.
+// $eq    // equal
+// $ne    // not equal
+// $gt    // greater than
+// $gte   // greater than or equal
+// $lt    // less than
+// $lte   // less than or equal
+// $in    // matches any value
+// $nin   // doesn't match values
+
+// Example:
+// db.students.find({ age: { $gte: 18 } })
+
+// ### 2. Logical Operators
+
+// Used to combine conditions.
+// $and
+// $or
+// $nor
+// $not
+
+// Example:
+// db.students.find({
+//   $or: [
+//     { age: 29 },
+//     { course: "MERN" }
+//   ]
+// })
+
+// ### 3. Element Operators
+// Check whether a field exists or its data type.
+// $exists
+// $type
+
+// Examples:
+// db.students.find({
+//   phone: { $exists: true }
+// })
+
+// db.students.find({
+//   age: { $type: "int" }
+// })
+// ### 4. Evaluation Operators
+// Perform more advanced matching.
+// $regex
+// $expr
+// $jsonSchema
+// $mod
+// $text
+// $where
+// Examples:
+// db.students.find({
+//   name: { $regex: "^Noor" }
+// })
+
+// db.students.find({
+//   age: { $mod: [5, 0] }
+// })
+
+// ### 5. Array Operators
+// Used with arrays.
+// $all
+// $elemMatch
+// $size
+
+// db.students.find({
+//   skills: { $all: ["React", "MongoDB"] }
+// })
+
+// db.students.find({
+//   skills: { $size: 3 }
+// })
+// ## Easy Classification
+// Query Operators
+// │
+// ├── Comparison
+// │   ├── $eq
+// │   ├── $ne
+// │   ├── $gt
+// │   ├── $gte
+// │   ├── $lt
+// │   ├── $lte
+// │   ├── $in
+// │   └── $nin
+// │
+// ├── Logical
+// │   ├── $and
+// │   ├── $or
+// │   ├── $nor
+// │   └── $not
+// │
+// ├── Element
+// │   ├── $exists
+// │   └── $type
+// │
+// ├── Evaluation
+// │   ├── $regex
+// │   ├── $expr
+// │   ├── $mod
+// │   └── $text
+// │
+// └── Array
+//     ├── $all
+//     ├── $elemMatch
+//     └── $size
+
+// Memory trick:
+//>Comparison = compare, Logical = combine, Element = check field, Evaluation = advanced matching, Array = work with arrays.
+
+// <================Lecture(14)Evaluation Operators======================>
+// ## MongoDB Evaluation Operators — Short Notes
+// Evaluation operators are used for advanced searching, calculations, patterns, and expressions.
+
+// Assume:
+// db.students.find()
+
+// | Operator      | Purpose                             | Example                                  |
+// | ------------- | ----------------------------------- | ---------------------------------------- |
+// | `$regex`      | Pattern matching                    | `{ name: { $regex: "^Noor" } }`          |
+// | `$expr`       | Compare/calculations between fields | `{ $expr: { $gt: ["$marks", "$age"] } }` |
+// | `$mod`        | Find numbers divisible by a value   | `{ age: { $mod: [5, 0] } }`              |
+// | `$text`       | Text search                         | `{ $text: { $search: "MongoDB" } }`      |
+// | `$jsonSchema` | Validate document structure         | `{ $jsonSchema: {...} }`                 |
+// | `$where`      | JavaScript-based condition          | `{ $where: "this.age > 25" }`            |
+
+// ### 1. `$regex` — Pattern Search
+// Find names starting with `Noor`:
+// db.students.find({
+//   name: { $regex: "^Noor" }
+// })
+
+// Common patterns:
+// ^Noor    → starts with Noor
+// Noor$    → ends with Noor
+// Noor     → contains Noor
+
+// ### 2. `$expr` — Compare Fields
+// Suppose document has:
+// {
+//   age: 29,
+//   marks: 80
+// }
+// Compare two fields:
+// db.students.find({
+//   $expr: {
+//     $gt: ["$marks", "$age"]
+//   }
+// })
+
+// Meaning:
+// marks > age
+// `$expr` is useful when you need to compare one field with another field.
+
+// ### 3. `$mod` — Modulus
+// Find students whose age is divisible by 5:
+// db.students.find({
+//   age: { $mod: [5, 0] }
+// })
+// Meaning:
+// age % 5 = 0
+
+// Example:
+// 25 % 5 = 0 ✅
+// 30 % 5 = 0 ✅
+// 29 % 5 = 4 ❌
+
+// ### 4. `$text` — Text Search
+// First create a text index:
+// db.students.createIndex({
+//   name: "text",
+//   course: "text"
+// })
+
+// Then search:
+// db.students.find({
+//   $text: {
+//     $search: "MongoDB"
+//   }
+// })
+
+// Used for text searching in indexed fields.
+
+// ### 5. `$jsonSchema` — Schema Validation
+// Example:
+// db.students.find({
+//   $jsonSchema: {
+//     required: ["name", "age"]
+//   }
+// })
+// Used to define/check the structure and data types of documents.
+
+// ### 6. `$where` — JavaScript Condition
+// db.students.find({
+//   $where: "this.age > 25"
+// })
+// Meaning:
+// Find students where age > 25
+// ⚠️ `$where` is generally avoided when normal MongoDB operators can solve the query because it can be slower and has security/performance considerations.
+
+// ## Easy Memory Trick
+// $regex      → Pattern
+// $expr       → Field comparison/calculation
+// $mod        → Remainder
+// $text       → Text search
+// $jsonSchema  → Schema validation
+// $where      → JavaScript condition
+
+// <================Lecture(15)======================>
+// <================Lecture(16)======================>
