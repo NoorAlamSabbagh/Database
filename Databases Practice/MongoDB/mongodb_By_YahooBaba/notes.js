@@ -868,5 +868,52 @@
 // $jsonSchema  → Schema validation
 // $where      → JavaScript condition
 
-// <================Lecture(15)======================>
-// <================Lecture(16)======================>
+//<================Lecture(15)MongoDB FindOneAndUpdate FindOneAndReplace FindOneAndDelete ======================>
+// ## MongoDB `findOneAnd...` Methods — Short Notes
+// db.students
+// ### 1. `findOneAndUpdate()`
+// Finds one document and updates it.
+// db.students.findOneAndUpdate(
+//   { name: "Noor Alam" },
+//   { $set: { age: 30 } }
+// )
+// 👉 Finds Noor and changes `age` to `30`.
+
+// ### 2. `findOneAndReplace()`
+// Finds one document and completely replaces it.
+// db.students.findOneAndReplace(
+//   { name: "Noor Alam" },
+//   {
+//     name: "Noor Alam",
+//     age: 30,
+//     course: "MERN",
+//     email: "noor@gmail.com",
+//     phone: "9876543210",
+//     gender: "Male"
+//   }
+// )
+// 👉 Old document is replaced with the new document.
+// ⚠️ Fields not included in the replacement are removed.
+
+// ### 3. `findOneAndDelete()`
+// Finds one document and deletes it.
+// db.students.findOneAndDelete({
+//   name: "Noor Alam"
+// })
+// 👉 Finds the first matching document and deletes it.
+
+// ### Quick Difference
+// | Method                | Action                             |
+// | --------------------- | ---------------------------------- |
+// | `findOneAndUpdate()`  | Find + **Update fields**           |
+// | `findOneAndReplace()` | Find + **Replace entire document** |
+// | `findOneAndDelete()`  | Find + **Delete document**         |
+
+// ### Easy Memory
+// findOneAndUpdate  → ✏️ Change
+// findOneAndReplace → 🔄 Replace
+// findOneAndDelete  → 🗑️ Delete
+// Interview: These methods are useful when you want to find one document and perform an operation on it in a single database command, often with options to return 
+// the document before or after the operation.
+
+// <================Lecture(16)Aggregation Pipeline Operator1======================>
