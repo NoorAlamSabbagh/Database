@@ -917,3 +917,441 @@
 // the document before or after the operation.
 
 // <================Lecture(16)Aggregation Pipeline Operator1======================>
+// # MongoDB Aggregation — Short Notes
+// Aggregation = process documents and get a calculated/transformed result.
+// Think:
+// Documents
+//    ↓
+// Aggregation Pipeline
+//    ↓
+// Filter → Group → Sort → Result
+
+// Assume:
+// db.students.aggregate([
+//   ...
+// ])
+
+// ## Main Aggregation Stages
+
+// | Stage                 | Purpose                      | Example                          |
+// | --------------------- | ---------------------------- | -------------------------------- |
+// | `$match`              | Filter documents             | `{ $match: { age: 29 } }`        |
+// | `$group`              | Group documents              | `{ $group: { _id: "$course" } }` |
+// | `$project`            | Select/transform fields      | `{ $project: { name: 1 } }`      |
+// | `$set` / `$addFields` | Add/modify fields            | `{ $set: { passed: true } }`     |
+// | `$unset`              | Remove fields                | `{ $unset: "email" }`            |
+// | `$sort`               | Sort documents               | `{ $sort: { age: -1 } }`         |
+// | `$limit`              | Limit results                | `{ $limit: 5 }`                  |
+// | `$skip`               | Skip results                 | `{ $skip: 5 }`                   |
+// | `$unwind`             | Split array elements         | `{ $unwind: "$skills" }`         |
+// | `$lookup`             | Join collections             | `{ $lookup: {...} }`             |
+// | `$count`              | Count documents              | `{ $count: "total" }`            |
+// | `$sample`             | Random documents             | `{ $sample: { size: 3 } }`       |
+// | `$replaceRoot`        | Replace document root        | `{ $replaceRoot: {...} }`        |
+// | `$replaceWith`        | Replace document             | `{ $replaceWith: "$address" }`   |
+// | `$facet`              | Multiple pipelines at once   | `{ $facet: {...} }`              |
+// | `$bucket`             | Group into ranges            | `{ $bucket: {...} }`             |
+// | `$bucketAuto`         | Automatically create ranges  | `{ $bucketAuto: {...} }`         |
+// | `$out`                | Write result to collection   | `{ $out: "results" }`            |
+// | `$merge`              | Merge result into collection | `{ $merge: "students" }`         |
+
+// # 1. `$match`
+// Filters documents.
+// db.students.aggregate([
+//   { $match: { age: { $gte: 25 } } }
+// ])
+// Meaning: Find students age 25 or above.
+// > Similar to `find()`.
+
+// # 2. `$group`
+// Groups documents and performs calculations.
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       totalStudents: { $sum: 1 }
+//     }
+//   }
+// ])
+// Result:
+// MERN  → 10
+// Java  → 5
+// ### Common `$group` operators
+// $sum
+// $avg
+// $min
+// $max
+// $first
+// $last
+// $push
+// $addToSet
+
+// Example:
+// {
+//   $group: {
+//     _id: "$course",
+//     averageMarks: { $avg: "$marks" }
+//   }
+// }
+
+// # 3. `$project`
+// Choose or transform fields.
+// db.students.aggregate([
+//   {
+//     $project: {
+//       _id: 0,
+//       name: 1,
+//       course: 1
+//     }
+//   }
+// ])
+// Output:
+// {
+//   name: "Noor Alam",
+//   course: "MERN"
+// }
+
+// # 4. `$set`
+// Add or modify a field.
+// db.students.aggregate([
+//   {
+//     $set: {
+//       passed: { $gte: ["$marks", 40] }
+//     }
+//   }
+// ])
+// Adds:
+// passed: true
+// `$addFields` does essentially the same job.
+
+
+// # 5. `$unset`
+// Remove fields.
+// db.students.aggregate([
+//   {
+//     $unset: ["email", "phone"]
+//   }
+// ])
+
+// # 6. `$sort`
+// Sort results.
+// db.students.aggregate([
+//   { $sort: { marks: -1 } }
+// ])
+// 1  → Ascending
+// -1 → Descending
+
+// # 7. `$limit`
+// Return only a specific number.
+// db.students.aggregate([
+//   { $limit: 5 }
+// ])
+// Returns first 5 documents.
+
+// # 8. `$skip`
+// Skip documents.
+// db.students.aggregate([
+//   { $skip: 5 }
+// ])
+// Skips first 5.
+
+// # 9. `$unwind`
+// Breaks an array into separate documents.
+// Suppose:
+// {
+//   name: "Noor",
+//   skills: ["React", "Node", "MongoDB"]
+// }
+// db.students.aggregate([
+//   { $unwind: "$skills" }
+// ])
+// Result:
+// Noor → React
+// Noor → Node
+// Noor → MongoDB
+
+// # 10. `$lookup`
+// Performs a join between collections
+// db.students.aggregate([
+//   {
+//     $lookup: {
+//       from: "courses",
+//       localField: "course",
+//       foreignField: "name",
+//       as: "courseDetails"
+//     }
+//   }
+// ])
+// Think:
+// >MongoDB `$lookup` ≈ SQL JOIN**
+
+// # 11. `$count`
+// Counts documents.
+// db.students.aggregate([
+//   { $count: "totalStudents" }
+// ])
+// Result:
+// {
+//   totalStudents: 20
+// }
+
+// # 12. `$sample`
+// Gets random documents.
+// db.students.aggregate([
+//   { $sample: { size: 3 } }
+// ])
+// Returns 3 random students.
+
+// # 13. `$replaceRoot`
+// Makes another object the entire document.
+// db.students.aggregate([
+//   {
+//     $replaceRoot: {
+//       newRoot: "$address"
+//     }
+//   }
+// ])
+// If document contains:
+// address: {
+//   city: "Bangalore",
+//   state: "Karnataka"
+// }
+
+// Result becomes:
+// {
+//   city: "Bangalore",
+//   state: "Karnataka"
+// }
+
+// # 14. `$replaceWith`
+// Similar to `$replaceRoot`.
+// db.students.aggregate([
+//   {
+//     $replaceWith: "$address"
+//   }
+// ])
+
+// # 15. `$facet`
+// Runs multiple aggregation pipelines at the same time.
+// db.students.aggregate([
+//   {
+//     $facet: {
+//       total: [
+//         { $count: "count" }
+//       ],
+//       topStudents: [
+//         { $sort: { marks: -1 } },
+//         { $limit: 5 }
+//       ]
+//     }
+//   }
+// ])
+// Useful for dashboards.
+
+// # 16. `$bucket`
+// Groups data into predefined ranges.
+// db.students.aggregate([
+//   {
+//     $bucket: {
+//       groupBy: "$age",
+//       boundaries: [18, 25, 30, 40],
+//       default: "Other",
+//       output: {
+//         count: { $sum: 1 }
+//       }
+//     }
+//   }
+// ])
+// Think:
+// 18–24
+// 25–29
+// 30–39
+// # 17. `$bucketAuto`
+// MongoDB automatically determines the ranges.
+// db.students.aggregate([
+//   {
+//     $bucketAuto: {
+//       groupBy: "$age",
+//       buckets: 3
+//     }
+//   }
+// ])
+// Creates 3 approximately even buckets.
+
+// # 18. `$out`
+// Writes aggregation results into a new/existing collection.
+// db.students.aggregate([
+//   { $match: { course: "MERN" } },
+//   { $out: "mernStudents" }
+// ])
+// Creates/overwrites:
+// mernStudents
+
+// # 19. `$merge`
+// Writes aggregation results into an existing collection while allowing more controlled merging.
+// db.students.aggregate([
+//   { $match: { course: "MERN" } },
+//   {
+//     $merge: {
+//       into: "mernStudents"
+//     }
+//   }
+// ])
+// ### `$out` vs `$merge`
+// $out   → Replace collection with result
+// $merge → Merge/update result into collection
+
+// # Most Important Aggregation Operators
+// Inside stages like `$group`, `$project`, and `$set`:
+// ### Arithmetic
+// $add
+// $subtract
+// $multiply
+// $divide
+// $mod
+
+// ### Comparison
+// $eq
+// $ne
+// $gt
+// $gte
+// $lt
+// $lte
+// ### Logical
+// $and
+// $or
+// $not
+
+// ### Conditional
+// $cond
+// $ifNull
+// $switch
+
+// ### Array
+// $size
+// $first
+// $last
+// $filter
+// $map
+// $concatArrays
+
+// ### String
+// $concat
+// $toUpper
+// $toLower
+// $trim
+// $substr
+
+// # Real Example
+// Find the average marks of each course, then show highest average first:
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       averageMarks: { $avg: "$marks" }
+//     }
+//   },
+//   {
+//     $sort: {
+//       averageMarks: -1
+//     }
+//   }
+// ])
+// Pipeline:
+// Students
+//    ↓
+// $group
+//    ↓
+// Calculate average
+//    ↓
+// $sort
+//    ↓
+// Highest average first
+// //
+// db.students.aggregate([
+//   {
+//     $match: {
+//         age: { $gte: 25 }
+//     }
+//   },
+//   {
+//     $sort: {
+//       averageMarks: -1
+//     }
+//   }
+// ])
+// ```
+
+// db.students.aggregate([
+//   {$match: {age: { $gte: 25 }}},
+//   {$sort: {averageMarks: -1}},
+//   {$project: {_id: 0, name: 1, averageMarks: 1}}
+//   ])
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $lt: 20 }}},
+//   {$count: "names"}
+//   ])
+//Result:
+// { "names" : 2 }
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $gt: 20 }}},
+//   {$sort: {age: -1}},
+//   ])
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $gt: 20 }}},
+//   {$sort: {age: 1, name:1}},
+//   ])
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $gt: 20 }}},
+//   {$sort: {age: 1, name:1}},
+//   {$project: {_id: 0, name: 1, age: 1}}
+//   ])
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $gt: 20 }}},
+//   {$sort: {age: 1, name:1}},
+//   {$project: {_id: 0, name: 1, age: 1, 
+//   isValidAge: {$cond: [{$gte: ["$age", 25]}, true, false]}
+//    }}
+//   ])
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $gt: 20 }}},
+//   {$sort: {age: 1, name:1}},
+//   {$project: {_id: 0, name: 1, age: 1}}, 
+//   {$limit:1}
+//   ])
+
+//
+// db.students.aggregate([
+//   {$match: {age: { $gt: 20 }}},
+//   {$sort: {age: 1, name:1}},
+//   {$project: {_id: 0, name: 1, age: 1}}, 
+//   {$skip:10}
+//   {$limit:10}
+//   ])
+
+// ## Interview Memory
+// > `$match` → Filter
+// > `$group` → Group + Calculate
+// > `$project` → Select/Transform
+// > `$set` → Add/Modify
+// > `$unwind` → Break array
+// > `$lookup` → Join
+// > `$sort` → Sort
+// > `$limit` → Limit
+// > `$skip` → Skip
+// > `$count` → Count
+// > `$facet` → Multiple pipelines
+// > `$out` → Write result
+// > `$merge` → Merge result
