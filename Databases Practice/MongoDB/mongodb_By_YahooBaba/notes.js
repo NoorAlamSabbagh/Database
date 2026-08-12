@@ -1341,6 +1341,7 @@
 //   {$limit:10}
 //   ])
 
+//
 // ## Interview Memory
 // > `$match` → Filter
 // > `$group` → Group + Calculate
@@ -1354,4 +1355,127 @@
 // > `$count` → Count
 // > `$facet` → Multiple pipelines
 // > `$out` → Write result
-// > `$merge` → Merge result
+// > `$merge` → Merge res
+// 
+
+// <================Lecture(17)MongoDB Aggregation $group Operator ======================>
+// MongoDB Aggregation `$group` Operator
+// `$group` is used to **group documents based on a field and perform calculations** on each group.
+// ### Basic Syntax
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course"
+//     }
+//   }
+// ])
+// If data is:
+// { name: "Noor", course: "MERN", marks: 90 }
+// { name: "Aman", course: "MERN", marks: 80 }
+// { name: "Rahul", course: "Java", marks: 70 }
+// Result:
+// MERN
+// Java
+
+// ### `$sum` — Count documents
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       totalStudents: { $sum: 1 }
+//     }
+//   }
+// ])
+// Result:
+// MERN → 2
+// Java → 1
+
+// ### `$sum` — Add values
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       totalMarks: { $sum: "$marks" }
+//     }
+//   }
+// ])
+// MERN → 170
+// Java → 70
+
+// ### `$avg` — Average
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       averageMarks: { $avg: "$marks" }
+//     }
+//   }
+// ])
+// MERN → 85
+// Java → 70
+
+// ### `$max` — Highest value
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       highestMarks: { $max: "$marks" }
+//     }
+//   }
+// ])
+
+// ### `$min` — Lowest value
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       lowestMarks: { $min: "$marks" }
+//     }
+//   }
+// ])
+
+// ### `$push` — Put values into an array
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       students: { $push: "$name" }
+//     }
+//   }
+// ])
+// Result:
+// {
+//   _id: "MERN",
+//   students: ["Noor", "Aman"]
+// }
+
+// ### `$addToSet` — Unique values
+// db.students.aggregate([
+//   {
+//     $group: {
+//       _id: "$course",
+//       skills: { $addToSet: "$skill" }
+//     }
+//   }
+// ])
+
+// Unlike `$push`, duplicate values are removed.
+// ### Important `$group` Accumulators
+// $sum        → Total / Count
+// $avg        → Average
+// $max        → Maximum
+// $min        → Minimum
+// $first       → First value
+// $last        → Last value
+// $push        → Create array (duplicates allowed)
+// $addToSet   → Create unique array
+
+// ### Easy Interview Definition
+// > `$group` groups documents based on a common value and allows us to calculate things like count, sum, average, minimum, and maximum for each group.
+
+// Memory:
+// `$group` = GROUP BY in SQL.
+
+
+
+
