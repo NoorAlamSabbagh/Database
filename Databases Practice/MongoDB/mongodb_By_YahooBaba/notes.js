@@ -1476,6 +1476,72 @@
 // Memory:
 // `$group` = GROUP BY in SQL.
 
+//
+// <================Lecture(18)MongoDB Aggregation $lookUp Operator ======================>
+// ### `$lookup` in MongoDB
+// The `$lookup` aggregation stage is used to join documents from two collections, similar to a SQL `JOIN`.
+// ### Basic Syntax
+// db.orders.aggregate([
+//   {
+//     $lookup: {
+//       from: "customers",
+//       localField: "customerId",
+//       foreignField: "_id",
+//       as: "customerDetails"
+//     }
+//   }
+// ])
 
+// ### Example
+// Suppose we have an `orders` collection:
+// {
+//   _id: 101,
+//   product: "Laptop",
+//   customerId: 1
+// }
+
+// And a `customers` collection:
+// {
+//   _id: 1,
+//   name: "Rahul",
+//   city: "Bangalore"
+// }
+
+// Using `$lookup`:
+// db.orders.aggregate([
+//   {
+//     $lookup: {
+//       from: "customers",
+//       localField: "customerId",
+//       foreignField: "_id",
+//       as: "customer"
+//     }
+//   }
+// ])
+// Result:
+// {
+//   _id: 101,
+//   product: "Laptop",
+//   customerId: 1,
+//   customer: [
+//     {
+//       _id: 1,
+//       name: "Rahul",
+//       city: "Bangalore"
+//     }
+//   ]
+// }
+
+// ### Important fields
+
+// | Field          | Meaning                                |
+// | -------------- | -------------------------------------- |
+// | `from`         | Collection to join                     |
+// | `localField`   | Field in the current collection        |
+// | `foreignField` | Matching field in the other collection |
+// | `as`           | Name of the resulting array            |
+
+// Key point: `$lookup` normally produces an array of matching documents, 
+// even when there is only one match.
 
 
