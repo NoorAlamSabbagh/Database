@@ -1544,4 +1544,343 @@
 // Key point: `$lookup` normally produces an array of matching documents, 
 // even when there is only one match.
 
+//
+// `$unwind` is used to convert the array created by `$lookup` into a single object.
+// # Example data
+// `orders`
+// {
+//   _id: 101,
+//   customerId: 1,
+//   product: "Laptop"
+// }
+// `customers`
+// {
+//   _id: 1,
+//   name: "Rahul",
+//   email: "rahul@gmail.com"
+// }
 
+// # `$lookup` + `$unwind`
+// db.orders.aggregate([
+//   {
+//     $lookup: {
+//       from: "customers",
+//       localField: "customerId",
+//       foreignField: "_id",
+//       as: "customerDetails"
+//     }
+//   },
+//   {
+//     $unwind: "$customerDetails"
+//   }
+// ])
+// # What happens?
+// After `$lookup`, the result looks like:
+// {
+//   _id: 101,
+//   customerId: 1,
+//   product: "Laptop",
+//   customerDetails: [
+//     {
+//       _id: 1,
+//       name: "Rahul",
+//       email: "rahul@gmail.com"
+//     }
+//   ]
+// }
+// Notice that `customerDetails` is an array.
+// After:
+// {
+//   $unwind: "$customerDetails"
+// }
+// it becomes:
+// {
+//   _id: 101,
+//   customerId: 1,
+//   product: "Laptop",
+//   customerDetails: {
+//     _id: 1,
+//     name: "Rahul",
+//     email: "rahul@gmail.com"
+//   }
+// }
+// So, in simple words:
+// `$lookup` → joins collections and gives an array
+// `$unwind` → removes the array wrapper and gives the individual document
+// # Full example with multiple orders
+// db.orders.aggregate([
+//   {
+//     $lookup: {
+//       from: "customers",
+//       localField: "customerId",
+//       foreignField: "_id",
+//       as: "customerDetails"
+//     }
+//   },
+//   {
+//     $unwind: "$customerDetails"
+//   },
+//   {
+//     $project: {
+//       _id: 1,
+//       product: 1,
+//       customerName: "$customerDetails.name",
+//       customerEmail: "$customerDetails.email"
+//     }
+//   }
+// ])
+// Output:
+// {
+//   _id: 101,
+//   product: "Laptop",
+//   customerName: "Rahul",
+//   customerEmail: "rahul@gmail.com"
+// }
+// Easy way to remember: `$lookup` finds the related documents; 
+// `$unwind` takes them out of the array.
+
+//
+// MongoDB `$lookup` + `$replaceRoot` example, followed by the `$replaceWith` equivalent.
+// #Example data
+// `orders`:
+// {
+//   _id: 1,
+//   productId: 101,
+//   quantity: 2
+// }
+// `products`:
+// {
+//   _id: 101,
+//   name: "Laptop",
+//   price: 800,
+//   category: "Electronics"
+// }
+
+// #Using `$lookup` with `$replaceRoot`
+// Suppose you want the lookup result to contain the product document itself:
+// db.orders.aggregate([
+//   {
+//     $lookup: {
+//       from: "products",
+//       localField: "productId",
+//       foreignField: "_id",
+//       as: "product"
+//     }
+//   },
+//   {
+//     $unwind: "$product"
+//   },
+//   {
+//     $replaceRoot: {
+//       newRoot: "$product"
+//     }
+//   }
+// ])
+
+// Result:
+// {
+//   _id: 101,
+//   name: "Laptop",
+//   price: 800,
+//   category: "Electronics"
+// }
+
+// #Replacing `$replaceRoot` with `$replaceWith`
+// You can write the same thing more simply:
+// db.orders.aggregate([
+//   {
+//     $lookup: {
+//       from: "products",
+//       localField: "productId",
+//       foreignField: "_id",
+//       as: "product"
+//     }
+//   },
+//   {
+//     $unwind: "$product"
+//   },
+//   {
+//     $replaceWith: "$product"
+//   }
+// ])
+
+// ### Important difference
+// If you want to keep fields from the original order and combine them with the product
+// {
+//   $replaceWith: {
+//     $mergeObjects: [
+//       "$product",
+//       "$$ROOT"
+//     ]
+//   }
+// }
+// For example, the result could be:
+// {
+//   _id: 1,
+//   productId: 101,
+//   quantity: 2,
+//   name: "Laptop",
+//   price: 800,
+//   category: "Electronics"
+// }
+// In short:
+// $replaceRoot → older/verbose syntax
+// $replaceWith → simpler equivalent
+// $mergeObjects → useful when you want to combine the lookup document with the original document
+
+//
+// <================Lecture(19)MongoDB Aggregation $bucket & $bucketAuto Operator ======================>
+// #MongoDB Aggregation — `$bucket` and `$bucketAuto` Notes
+// Both `$bucket` and `$bucketAuto` are aggregation stages used to group documents into ranges (buckets) based on a numeric or other comparable field.
+// ## 1. `$bucket`
+// `$bucket` groups documents into explicitly defined ranges.
+// ### Syntax
+// {
+//   $bucket: {
+//     groupBy: <expression>,
+//     boundaries: [ <lower1>, <lower2>, ... ],
+//     default: <value>,
+//     output: {
+//       <field1>: { <accumulator1>: <expression1> }
+//     }
+//   }
+// }
+// ### Example
+// Suppose we have a `students` collection:
+// {
+//   name: "John",
+//   age: 17
+// }
+// {
+//   name: "Alice",
+//   age: 22
+// }
+// {
+//   name: "Bob",
+//   age: 27
+// }
+// {
+//   name: "David",
+//   age: 35
+// }
+// {
+//   name: "Sara",
+//   age: 45
+// }
+// We can group students into age ranges:
+// db.students.aggregate([
+//   {
+//     $bucket: {
+//       groupBy: "$age",
+//       boundaries: [0, 18, 30, 40, 50],
+//       default: "Other",
+//       output: {
+//         count: { $sum: 1 },
+//         students: { $push: "$name" }
+//       }
+//     }
+//   }
+// ])
+
+// ### Result
+
+// ```js
+// {
+//   _id: 0,
+//   count: 1,
+//   students: ["John"]
+// }
+// {
+//   _id: 18,
+//   count: 2,
+//   students: ["Alice", "Bob"]
+// }
+// {
+//   _id: 30,
+//   count: 1,
+//   students: ["David"]
+// }
+// {
+//   _id: 40,
+//   count: 1,
+//   students: ["Sara"]
+// }
+
+// ### How boundaries work
+// [0, 18)    → 0 ≤ age < 18
+// [18, 30)   → 18 ≤ age < 30
+// [30, 40)   → 30 ≤ age < 40
+// [40, 50)   → 40 ≤ age < 50
+// The lower boundary is inclusive, while the upper boundary is exclusive.
+// `default` catches values that don't fall within the specified boundaries.
+// # 2. `$bucketAuto`
+// `$bucketAuto` automatically determines the bucket boundaries.
+// You specify the number of buckets, rather than manually specifying boundaries.
+
+// ### Syntax
+// {
+//   $bucketAuto: {
+//     groupBy: <expression>,
+//     buckets: <number>,
+//     output: {
+//       <field1>: { <accumulator1>: <expression1> }
+//     }
+//   }
+// }
+
+// ### Example
+// db.students.aggregate([
+//   {
+//     $bucketAuto: {
+//       groupBy: "$age",
+//       buckets: 3,
+//       output: {
+//         count: { $sum: 1 },
+//         students: { $push: "$name" }
+//       }
+//     }
+//   }
+// ])
+// MongoDB automatically determines boundaries to create approximately equal-sized buckets.
+
+// A possible result:
+// {
+//   _id: { min: 17, max: 22 },
+//   count: 2,
+//   students: ["John", "Alice"]
+// }
+// {
+//   _id: { min: 22, max: 35 },
+//   count: 2,
+//   students: ["Bob", "David"]
+// }
+// {
+//   _id: { min: 35, max: 45 },
+//   count: 1,
+//   students: ["Sara"]
+// }
+
+// The exact boundaries depend on the data.
+// ## `$bucket` vs `$bucketAuto`
+// | Feature           | `$bucket`                 | `$bucketAuto`                           |
+// | ----------------- | ------------------------- | --------------------------------------- |
+// | Boundaries        | Manually specified        | Automatically calculated                |
+// | Number of buckets | Determined by boundaries  | Specified with `buckets`                |
+// | Control           | High                      | Less control                            |
+// | Useful for        | Known ranges              | Exploratory analysis                    |
+// | Example           | Age 0–18, 18–30, 30–40    | Divide data into 3 groups               |
+// | Bucket sizes      | Based on specified ranges | Approximately equal number of documents |
+
+// ### Easy way to remember
+// `$bucket` → "I decide the ranges."
+// boundaries: [0, 18, 30, 40, 50]
+// `$bucketAuto` → "MongoDB decides the ranges."
+// buckets: 4
+
+// #Common use cases
+// Age groups: 0–18, 19–30, 31–50
+// Price ranges: ₹0–₹1,000, ₹1,000–₹5,000
+// Salary ranges
+// Marks/score ranges
+// Product price analysis
+// Data distribution / exploratory analysis
