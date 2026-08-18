@@ -4,6 +4,50 @@
 // It stores data in BSON (Binary JSON) format.
 // It is schema-flexible, scalable, and high-performance.
 
+// ## BSON vs JSON
+// JSON = a human-readable data format.
+// BSON = a binary format designed and used by MongoDB to store documents.
+// | Feature                    | JSON                              | BSON                          |
+// | -------------------------- | --------------------------------- | ----------------------------- |
+// | Full form                  | JavaScript Object Notation        | Binary JSON                   |
+// | Format                     | Text                              | Binary                        |
+// | Human readable             | ✅ Yes                             | ❌ No                          |
+// | Used by MongoDB internally | ❌                                 | ✅ Yes                         |
+// | Data types                 | Limited                           | More data types               |
+// | Supports `Date`            | ❌ Native support                  | ✅                             |
+// | Supports `ObjectId`        | ❌                                 | ✅                             |
+// | Supports Binary data       | ❌                                 | ✅                             |
+// | Size                       | Generally smaller for simple text | Can be larger due to metadata |
+// | Parsing                    | Text parsing                      | Binary decoding               |
+// #Example
+// JSON:
+// {
+//   "name": "Noor",
+//   "age": 29
+// }
+// BSON:
+// MongoDB converts/stores the document in a binary representation with information about field names, values, types, and document length.
+// #Important MongoDB point
+// When you send this:
+// {
+//   name: "Noor",
+//   age: 29,
+//   createdAt: new Date()
+// }
+// MongoDB stores it as BSON, not plain JSON.
+// BSON can represent MongoDB-specific types such as:
+// ObjectId("...")
+// Date(...)
+// Decimal128(...)
+// Binary(...)
+// #Easy way to remember
+// JSON → text format for exchanging data
+// BSON → binary format MongoDB uses to store and work with data
+// Think of it like:
+// JSON → readable document**
+// ⬇️
+// BSON → MongoDB's optimized binary version of that document
+ 
 // MongoDB Structure
 // Database
 //    ↓
