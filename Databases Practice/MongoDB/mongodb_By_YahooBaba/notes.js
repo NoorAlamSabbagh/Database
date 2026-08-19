@@ -1928,3 +1928,165 @@
 // Marks/score ranges
 // Product price analysis
 // Data distribution / exploratory analysis
+
+//
+//<================Lecture(20)MongoDB Aggregation $addFields & $unwind Operator ======================>
+//## MongoDB Aggregation: `$addFields` & `$unwind` — Interview Notes
+
+### 1. `$addFields`
+Purpose:
+`$addFields` adds new fields to documents or modifies existing fields while keeping all existing fields.
+Syntax:
+{
+  $addFields: {
+    newField: <expression>,
+    existingField: <expression>
+  }
+}
+### Example
+Collection:
+{
+  name: "John",
+  salary: 50000,
+  bonus: 5000
+}
+Query:
+db.employees.aggregate([
+  {
+    $addFields: {
+      totalSalary: { $add: ["$salary", "$bonus"] }
+    }
+  }
+])
+Output:
+{
+  name: "John",
+  salary: 50000,
+  bonus: 5000,
+  totalSalary: 55000
+}
+### Important interview points
+* `$addFields` does not remove existing fields.
+* It can overwrite an existing field.
+* It accepts aggregation expressions such as `$add`, `$multiply`, `$concat`, `$cond`, etc.
+* `$set` is an alias for `$addFields` in modern MongoDB.
+
+Interview question: `$addFields` vs `$project`?
+> `$addFields` adds/modifies fields while retaining existing fields; `$project` is primarily used to control which fields appear in the output.
+# 2. `$unwind`
+Purpose:
+`$unwind` deconstructs an array field and creates one document for each array element.
+### Example
+Document:
+{
+  name: "John",
+  skills: ["Java", "MongoDB", "Spring"]
+}
+Query:
+db.users.aggregate([
+  {
+    $unwind: "$skills"
+  }
+])
+Output:
+{ name: "John", skills: "Java" }
+{ name: "John", skills: "MongoDB" }
+{ name: "John", skills: "Spring" }
+### Easy way to remember
+Array → `$unwind` → Multiple documents
+If one document contains:
+skills: [A, B, C]
+after `$unwind`:
+Document 1 → A
+Document 2 → B
+Document 3 → C
+## `$unwind` with options
+{
+  $unwind: {
+    path: "$skills",
+    preserveNullAndEmptyArrays: true,
+    includeArrayIndex: "index"
+  }
+}
+### `preserveNullAndEmptyArrays`
+By default, documents with a missing, `null`, or empty array field may be omitted.
+preserveNullAndEmptyArrays: true
+keeps those documents in the output.
+#`includeArrayIndex`
+Stores the array position:
+{
+  $unwind: {
+    path: "$skills",
+    includeArrayIndex: "skillIndex"
+  }
+}
+Output:
+{
+  name: "John",
+  skills: "Java",
+  skillIndex: 0
+}
+# 3. `$addFields` + `$unwind` together
+This combination is common in interviews.
+Example:
+{
+  name: "John",
+  orders: [
+    { product: "Laptop", price: 50000 },
+    { product: "Mouse", price: 1000 }
+  ]
+}
+Pipeline:
+db.users.aggregate([
+  {
+    $unwind: "$orders"
+  },
+  {
+    $addFields: {
+      orderPriceWithTax: {
+        $multiply: ["$orders.price", 1.18]
+      }
+    }
+  }
+])
+Result:
+{
+  name: "John",
+  orders: { product: "Laptop", price: 50000 },
+  orderPriceWithTax: 59000
+}
+
+{
+  name: "John",
+  orders: { product: "Mouse", price: 1000 },
+  orderPriceWithTax: 1180
+}
+### Why order matters
+If you need to calculate something for each array element, usually:
+$unwind
+   ↓
+$addFields
+Because `$unwind` first turns each array element into its own document.
+## Quick interview revision
+| Operator     | Main purpose                                 |
+| ------------ | -------------------------------------------- |
+| `$addFields` | Add or modify fields                         |
+| `$set`       | Alias of `$addFields`                        |
+| `$unwind`    | Split array elements into separate documents |
+| `$project`   | Include/exclude/reshape fields               |
+| `$group`     | Group documents and calculate aggregates     |
+| `$match`     | Filter documents                             |
+### One-line answers to memorize
+What does `$addFields` do?
+→ Adds new fields or modifies existing fields without removing other fields.
+What does `$unwind` do?
+→ Converts each element of an array into a separate document.
+What happens to other fields during `$unwind`?
+→ They are carried into each generated document.
+What is `$set`?
+→ `$set` is an alias for `$addFields`.
+When would you use `$unwind`?
+→ When you need to process, filter, group, or analyze individual elements of an array.
+Common pattern:
+$match → $unwind → $addFields → $group → $project
+This is a good pattern to recognize in MongoDB aggregation interview questions.
