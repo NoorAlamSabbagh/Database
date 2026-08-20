@@ -2328,3 +2328,245 @@
 // $out writes the aggregation result to a collection and replaces the existing collection.
 // $merge performs upsert-like behavior by inserting or updating documents in a target collection.
 // $unionWith combines documents from another collection, similar to SQL UNION ALL, and can also run a pipeline on the second collection before merging the results.
+
+//<================Lecture(22)MongoDB Aggregation $facet Operator ======================>
+// # MongoDB Aggregation: `$facet` Operator
+// ## What is `$facet`?
+// `$facet` allows you to run multiple aggregation pipelines on the same input documents at the same time.
+// Think of it as:
+// >One input → Multiple pipelines → One output document
+// It is very useful for dashboards, reports, filters, pagination, and analytics.
+// ### Syntax
+// {
+//   $facet: {
+//     pipeline1: [
+//       { /* stages */ }
+//     ],
+//     pipeline2: [
+//       { /* stages */ }
+//     ]
+//   }
+// }
+// # Example
+// Suppose we have an `orders` collection:
+// [
+//   { "_id": 1, "customer": "Noor", "category": "Electronics", "amount": 1000 },
+//   { "_id": 2, "customer": "Ali", "category": "Clothing", "amount": 500 },
+//   { "_id": 3, "customer": "Sara", "category": "Electronics", "amount": 2000 },
+//   { "_id": 4, "customer": "Ahmed", "category": "Clothing", "amount": 800 }
+// ]
+// We want to get:
+// 1. Total number of orders
+// 2. Total sales
+// 3. Orders grouped by category
+// Without `$facet`, we would need separate aggregation queries.
+// With `$facet`:
+// db.orders.aggregate([
+//   {
+//     $facet: {
+//       totalOrders: [
+//         {
+//           $count: "count"
+//         }
+//       ],
+//       totalSales: [
+//         {
+//           $group: {
+//             _id: null,
+//             total: { $sum: "$amount" }
+//           }
+//         }
+//       ],
+//       categoryWise: [
+//         {
+//           $group: {
+//             _id: "$category",
+//             count: { $sum: 1 },
+//             sales: { $sum: "$amount" }
+//           }
+//         }
+//       ]
+//     }
+//   }
+// ])
+// ### Output
+// [
+//   {
+//     "totalOrders": [
+//       {
+//         "count": 4
+//       }
+//     ],
+
+//     "totalSales": [
+//       {
+//         "_id": null,
+//         "total": 4300
+//       }
+//     ],
+
+//     "categoryWise": [
+//       {
+//         "_id": "Electronics",
+//         "count": 2,
+//         "sales": 3000
+//       },
+//       {
+//         "_id": "Clothing",
+//         "count": 2,
+//         "sales": 1300
+//       }
+//     ]
+//   }
+// ]
+// Notice that all three pipelines received the same input documents.
+// # `$facet` with `$match`
+// Usually, you first filter the data and then create multiple reports.
+// db.orders.aggregate([
+//   {
+//     $match: {
+//       amount: { $gte: 500 }
+//     }
+//   },
+//   {
+//     $facet: {
+//       totalOrders: [
+//         { $count: "count" }
+//       ],
+
+//       averageAmount: [
+//         {
+//           $group: {
+//             _id: null,
+//             average: { $avg: "$amount" }
+//           }
+//         }
+//       ],
+//       categories: [
+//         {
+//           $group: {
+//             _id: "$category",
+//             count: { $sum: 1 }
+//           }
+//         }
+//       ]
+//     }
+//   }
+// ])
+// The `$match` happens first, so all facet pipelines work only on the filtered documents.
+// # Real-World Example: E-Commerce Filters
+// Imagine an online shopping website.
+// You want one API response containing:
+// * Products
+// * Total number of products
+// * Price statistics
+// * Products grouped by category
+// db.products.aggregate([
+//   {
+//     $facet: {
+//       products: [
+//         { $skip: 0 },
+//         { $limit: 10 }
+//       ],
+
+//       totalProducts: [
+//         { $count: "count" }
+//       ],
+//       priceStats: [
+//         {
+//           $group: {
+//             _id: null,
+//             minPrice: { $min: "$price" },
+//             maxPrice: { $max: "$price" },
+//             avgPrice: { $avg: "$price" }
+//           }
+//         }
+//       ],
+//       categories: [
+//         {
+//           $group: {
+//             _id: "$category",
+//             count: { $sum: 1 }
+//           }
+//         }
+//       ]
+//     }
+//   }
+// ])
+// This is extremely useful for creating a single API response for a dashboard or product page.
+// # `$facet` and Pagination
+// One of the most common practical uses is pagination.
+// Instead of making two separate queries:
+// Query 1 → Get products
+// Query 2 → Get total count
+// You can do both in one aggregation:
+// db.products.aggregate([
+//   {
+//     $facet: {
+//       data: [
+//         { $skip: 20 },
+//         { $limit: 10 }
+//       ],
+
+//       totalCount: [
+//         { $count: "count" }
+//       ]
+//     }
+//   }
+// ])
+// Output:
+// [
+//   {
+//     "data": [
+//       // 10 products
+//     ],
+//     "totalCount": [
+//       {
+//         "count": 100
+//       }
+//     ]
+//   }
+// ]
+// This is a very common backend/API pattern.
+// # Important Point
+// The pipelines inside `$facet` are independent of each other.
+// For example:
+// {
+//   $facet: {
+//     pipelineA: [
+//       { $match: { category: "Electronics" } }
+//     ],
+
+//     pipelineB: [
+//       { $match: { category: "Clothing" } }
+//     ]
+//   }
+// }
+// Both start from the same input coming into `$facet`.
+// # `$facet` vs `$group`
+// | `$facet`                      | `$group`                          |
+// | ----------------------------- | --------------------------------- |
+// | Runs multiple pipelines       | Groups documents                  |
+// | Produces multiple results     | Produces grouped results          |
+// | Useful for dashboards/reports | Useful for aggregation by a field |
+// | Multiple operations at once   | One grouping operation            |
+// # `$facet` vs Multiple Queries
+// ### Without `$facet`
+// Database Query → Total Count
+// Database Query → Products
+// Database Query → Category Stats
+// ### With `$facet`
+//               ┌→ Total Count
+// Input → $facet ├→ Products
+//               └→ Category Stats
+// So `$facet` can help you combine multiple related calculations into one aggregation request.
+// # Interview One-Liner
+// >`$facet` allows multiple aggregation pipelines to process the same input documents independently and returns all their results together in a single document.
+// ### Easy way to remember
+// `$facet` = Multiple pipelines from the same input.
+//                 ┌── Pipeline 1
+// Input → $facet ─┼── Pipeline 2
+//                 └── Pipeline 3
+// For interviews, remember this common use case:
+// `$facet` → Pagination + Total Count + Filters/Statistics in one aggregation.
+
