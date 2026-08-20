@@ -2089,3 +2089,242 @@
 // Common pattern:
 // $match → $unwind → $addFields → $group → $project
 // This is a good pattern to recognize in MongoDB aggregation interview questions.
+
+//<================Lecture(21)MongoDB Aggregation $out $merge & $union Operator ======================>
+// MongoDB Aggregation: $out, $merge & $unionWith
+// These operators are used to save aggregation results or combine data from multiple collections.
+// Operator     Purpose
+// $out         Write aggregation result to a new/existing collection (replaces it).
+// $merge       Insert, update, or merge aggregation result into a collection.
+// $unionWith   Combine documents from another collection (similar to SQL UNION ALL).
+
+// 1. $out Operator
+// What is $out?
+// $out takes the final output of an aggregation pipeline and writes it to a collection.
+// Creates the collection if it doesn't exist.
+// Replaces the entire collection if it already exists.
+// Must be the last stage of the pipeline.
+// Syntax
+// {
+//   $out: "collectionName"
+// }
+// Example
+// orders Collection
+// [
+//   { "_id":1, "customer":"Noor", "amount":1000 },
+//   { "_id":2, "customer":"Ali", "amount":2000 }
+// ]
+// Aggregation
+// db.orders.aggregate([
+//   {
+//     $match: {
+//       amount: { $gte: 1500 }
+//     }
+//   },
+//   {
+//     $out: "highValueOrders"
+//   }
+// ])
+// New Collection: highValueOrders
+// [
+//   { "_id":2, "customer":"Ali", "amount":2000 }
+// ]
+// The result is stored permanently.
+// Important Points
+// Must be the last pipeline stage.
+// Replaces existing collection completely.
+// Good for reports, backups, and exporting processed data.
+// 2. $merge Operator
+// What is $merge?
+// $merge writes aggregation results into a collection without replacing everything.
+// It can:
+// Insert new documents
+// Update existing documents
+// Keep existing documents unchanged
+// Merge fields
+// Think of it like an upsert.
+// Syntax
+// {
+//   $merge: {
+//     into: "collectionName",
+//     on: "_id",
+//     whenMatched: "merge",
+//     whenNotMatched: "insert"
+//   }
+// }
+// Example
+// Existing salesSummary
+// [
+//   { "_id":1, "total":500 }
+// ]
+// sales
+// [
+//   { "_id":1, "amount":700 },
+//   { "_id":2, "amount":900 }
+// ]
+// Aggregation
+// db.sales.aggregate([
+//   {
+//     $project: {
+//       total: "$amount"
+//     }
+//   },
+//   {
+//     $merge: {
+//       into: "salesSummary",
+//       on: "_id",
+//       whenMatched: "merge",
+//       whenNotMatched: "insert"
+//     }
+//   }
+// ])
+// Output
+// [
+//   { "_id":1, "total":700 },
+//   { "_id":2, "total":900 }
+// ]
+// _id:1 was updated.
+// _id:2 was inserted.
+// whenMatched Options
+// Option         Meaning
+// "replace"      Replace existing document
+// "merge"        Merge fields (most common)
+// "keepExisting" Keep old document
+// "fail"         Throw an error
+// Pipelinecc     Custom update logic
+// Example
+// {
+//   $merge: {
+//     into: "summary",
+//     whenMatched: "replace"
+//   }
+// }
+// The old document is completely replaced.
+// whenNotMatched Options
+// Option      Meaning
+// "insert"    Insert new document
+// "discard"   Ignore it
+// "fail"      Throw an error
+// Example:
+// whenNotMatched: "discard"
+// New documents are skipped.
+// $out vs $merge
+
+// Feature                        $out                       $merge
+// Existing collection            Replaces completely        Updates existing
+// Insert new docs                Yes                        Yes
+// Update existing docs           No                         Yes
+// Upsert behavior                No                         Yes
+// Last stage                     Yes                        Yes
+// Use $out when generating a brand-new result collection, and $merge when maintaining or updating an existing collection.
+
+// 3. $unionWith Operator
+// What is $unionWith?
+// $unionWith combines documents from another collection into the current aggregation result.
+// It is similar to SQL's UNION ALL because duplicates are not removed automatically.
+// Syntax
+// {
+//   $unionWith: {
+//     coll: "collectionName"
+//   }
+// }
+// Example
+// students
+// [
+//   { "name":"Noor" },
+//   { "name":"Ali" }
+// ]
+// teachers
+// [
+//   { "name":"Sara" },
+//   { "name":"Ahmed" }
+// ]
+// Aggregation
+// db.students.aggregate([
+//   {
+//     $unionWith: {
+//       coll: "teachers"
+//     }
+//   }
+// ])
+// Output
+// [
+//   { "name":"Noor" },
+//   { "name":"Ali" },
+//   { "name":"Sara" },
+//   { "name":"Ahmed" }
+// ]
+// Both collections appear in one result.
+// $unionWith with a Pipeline
+// You can filter the second collection.
+// db.students.aggregate([
+//   {
+//     $unionWith: {
+//       coll: "teachers",
+//       pipeline: [
+//         {
+//           $match: {
+//             department: "IT"
+//           }
+//         }
+//       ]
+//     }
+//   }
+// ])
+// Only IT teachers are added.
+// Remove Duplicates
+// Since $unionWith behaves like UNION ALL, use $group afterward.
+// db.students.aggregate([
+//   {
+//     $unionWith: {
+//       coll: "teachers"
+//     }
+//   },
+//   {
+//     $group: {
+//       _id: "$name"
+//     }
+//   }
+// ])
+// Duplicate names are removed.
+// Real-World Example
+// Suppose an e-commerce company has:
+// onlineOrders
+// storeOrders
+// To generate one sales report:
+// db.onlineOrders.aggregate([
+//   {
+//     $unionWith: {
+//       coll: "storeOrders"
+//     }
+//   },
+//   {
+//     $group: {
+//       _id: null,
+//       totalSales: {
+//         $sum: "$amount"
+//       }
+//     }
+//   }
+// ])
+// This calculates total sales across both collections.
+
+// $lookup vs $unionWith
+// $lookup                     $unionWith
+// Joins related documents     Appends documents
+// Like SQL JOIN               Like SQL UNION ALL
+// Returns nested array        Returns combined rows
+// Matches using fields        No matching required
+// Example:
+// $lookup → Order + User
+// $unionWith → Online Orders + Store Orders
+// Quick Interview Comparison
+// Operator       Main Use
+// $out           Save results by replacing a collection
+// $merge         Save results by updating or inserting
+// $unionWith     Combine two collections into one result
+
+// Interview One-Liners
+// $out writes the aggregation result to a collection and replaces the existing collection.
+// $merge performs upsert-like behavior by inserting or updating documents in a target collection.
+// $unionWith combines documents from another collection, similar to SQL UNION ALL, and can also run a pipeline on the second collection before merging the results.
