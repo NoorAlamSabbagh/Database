@@ -317,7 +317,8 @@
 // * **Null** – Missing or optional values
 
 // ## Interview Answer (One Statement)
-// > MongoDB uses BSON data types such as String, Number, Boolean, Array, Object, ObjectId, Date, Null, Binary, Regular Expression, Timestamp, JavaScript, and Decimal128. In day-to-day development, the most commonly used types are String, Number, Boolean, Array, Object, ObjectId, and Date.
+// > MongoDB uses BSON data types such as String, Number, Boolean, Array, Object, ObjectId, Date, Null, Binary, Regular Expression, 
+// Timestamp, JavaScript, and Decimal128. In day-to-day development, the most commonly used types are String, Number, Boolean, Array, Object, ObjectId, and Date.
 
 // <================Lecture(7) MongoDB JSON Schema Validation======================>
 // validator: {
@@ -2569,4 +2570,171 @@
 //                 └── Pipeline 3
 // For interviews, remember this common use case:
 // `$facet` → Pagination + Total Count + Filters/Statistics in one aggregation.
+
+//<================Lecture(23)MongoDB Arithemetic Operator ======================>
+// In MongoDB Aggregation, Arithmetic Operators are used to perform mathematical calculations on numeric fields. 
+// They are mostly used inside the `$project`, `$addFields`, `$group`, and other aggregation stages.
+// ### MongoDB Arithmetic Operators
+// Operator           | Purpose              | Example
+// `$add`             | Adds numbers         |`10 + 20`
+// `$subtract`        | Subtracts numbers    |`20 - 5`
+// `$multiply`        | Multiplies numbers   |`5 × 4`
+// `$divide`          | Divides numbers      |`20 ÷ 4`
+// `$mod`             | Returns remainder    |`10 % 3`
+// `$abs`             | Absolute value       |`-15 → 15`
+// `$ceil`            | Round up             |`4.2 → 5`
+// `$floor`           | Round down           |`4.8 → 4`
+// `$round`           | Round to nearest     |`4.56 → 5`
+// `$trunc`           | Remove decimals      |`4.89 → 4`
+// `$pow`             | Power                |`2³ = 8`
+// `$sqrt`            | Square root          |`√25 = 5`
+// `$exp`             | Exponential          |`e²`
+// `$ln`              | Natural log          |`ln(10)`
+// `$log`             | Log with base        |`log₁₀(100)`
+// `$log10`           | Base-10 log          |`1000 → 3`
+
+// ### Sample Collection
+// JSON
+// [
+// { "_id": 1, "name": "Laptop", "price": 50000, "quantity": 2 },
+// { "_id": 2, "name": "Phone", "price": 30000, "quantity": 3 }
+// ]
+// ### 1. `$add`
+// Add two values.
+// JavaScript
+// db.products.aggregate([
+// {
+// $project: {
+// name: 1,
+// total: { $add: ["$price", 1000] }
+// }
+// }
+// ])
+// Output
+// JSON
+// { "name": "Laptop", "total": 51000 }
+// ### 2. `$subtract`
+// db.products.aggregate([
+// {
+// $project: {
+// discountPrice: { $subtract: ["$price", 5000] }
+// }
+// }
+// ])
+// ### 3. `$multiply`
+// Find total amount.
+// db.products.aggregate([
+// {
+// $project: {
+// name: 1,
+// totalAmount: {
+// $multiply: ["$price", "$quantity"]
+// }
+// }
+// }
+// ])
+// Output
+// JSON
+// {
+// "name": "Laptop",
+// "totalAmount": 100000
+// }
+// ### 4. `$divide`
+// JavaScript
+// db.products.aggregate([
+// {
+// $project: {
+// halfPrice: {
+// $divide: ["$price", 2]
+// }
+// }
+// }
+// ])
+// ### 5. `$mod`
+// db.products.aggregate([
+// {
+// $project: {
+// remainder: {
+// $mod: ["$price", 1000]
+// }
+// }
+// }
+// ])
+// ### 6. `$abs`
+// db.test.aggregate([
+// {
+// $project: {
+// positive: { $abs: -25 }
+// }
+// }
+// ])
+// Output:
+// JSON
+// { "positive": 25 }
+// ### 7. `$ceil`
+// JavaScript
+// {
+// $project: {
+// value: { $ceil: 4.2 }
+// }
+// }
+// Output: `5`
+// ### 8. `$floor`
+// JavaScript
+// {
+// $project: {
+// value: { $floor: 4.8 }
+// }
+// }
+// Output: `4`
+// ### 9. `$round`
+// Round to 2 decimal places.
+// JavaScript
+// {
+// $project: {
+// value: { $round: [4.5678, 2] }
+// }
+// }
+// Output:
+// JSON
+// 4.57
+// ### 10. `$trunc`
+// JavaScript
+// {
+// $project: {
+// value: { $trunc: 4.987 }
+// }
+// }
+// Output: `4`
+// ### 11. `$pow`
+// JavaScript
+// {
+// $project: {
+// value: { $pow: [2, 5] }
+// }
+// }
+// Output: `32`
+// ### 12. `$sqrt`
+// JavaScript
+// {
+// $project: {
+// value: { $sqrt: 49 }
+// }
+// }
+// Output: `7`
+// ### Interview Tips
+// * Arithmetic operators are used only in the Aggregation Framework.
+// * Field names are prefixed with `$`, e.g., `"$price"`.
+// * Multiple values are passed as an array: `{ $add: [value1, value2] }`.
+// * `$multiply` is commonly used to calculate totals like `price × quantity`.
+// * `$round` accepts a second parameter for decimal precision.
+// ### Most Asked Operators in Interviews
+// * `$add`
+// * `$subtract`
+// * `$multiply`
+// * `$divide`
+// * `$mod`
+// * `$round`
+// These six operators cover the majority of practical MongoDB arithmetic questions in MERN stack interviews.
+
 
