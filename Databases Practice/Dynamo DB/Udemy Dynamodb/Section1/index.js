@@ -449,3 +449,34 @@
 // Q7. DynamoDB vs PostgreSQL?
 // DynamoDB is NoSQL and optimized for scalable key-based access; PostgreSQL is relational and better suited to relational data, 
 // joins, complex SQL queries, and strong relational modeling.
+
+// Dynamo was a distributed database system developed by Amazon engineers around 2007.
+// ### Why was Dynamo created?
+// Amazon needed a database that could:
+// Handle huge amounts of traffic
+// Scale across many machines
+// Remain highly available, even if some machines failed
+// Provide very fast access
+// So Amazon developed the Dynamo architecture for its internal systems.
+// > Dynamo = Amazon's original internal distributed database technology.
+// ## DynamoDB
+// DynamoDB is an AWS-managed NoSQL database service, launched by Amazon Web Services in 2012.
+// It was inspired by the ideas from Dynamo, but it is a separate AWS service.
+// > DynamoDB = AWS's fully managed NoSQL database based partly on lessons from Dynamo.
+// ### Simple history
+// Amazon's large-scale systems
+//           ↓
+//        Dynamo
+//      (around 2007)
+//           ↓
+//   Ideas/inspiration
+//           ↓
+//       DynamoDB
+//        (2012)
+//           ↓
+//  AWS customers use it
+// ### Interview line ⭐
+// >Dynamo was Amazon's internal distributed database system,
+// while DynamoDB is AWS's fully managed NoSQL database service that 
+// was influenced by Dynamo's architecture and design principles.
+
