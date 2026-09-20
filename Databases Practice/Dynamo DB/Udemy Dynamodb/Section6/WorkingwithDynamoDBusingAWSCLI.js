@@ -20,3 +20,5 @@
 // (1)aws dynamodb get-item --table-name td_notes_test --key file://key.json
 // (2)aws dynamodb scan --table-name td_notes_test
 // (3)aws dynamodb query --table-name td_notes_test --key-condition-expression "user_id = :uid" --expression-attribute-values file://attribute-value.json
+// (4)aws dynamodb query --table-name td_notes_test --key-condition-expression "user_id = :uid and timestamp > :t" --expression-attribute-values file://expression-attribute-values.json
+// (5)aws dynamodb query --table-name td_notes_test --key-condition-expression "user_id = :uid and timestamp > :t" --filter-expression "category = :cat" --expression-attribute-values file://expression-attribute-values.json
