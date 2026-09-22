@@ -1,3 +1,4 @@
+// /Lec(43)Write Operations - Item Level Operations with AWS SDK
 const AWS = require("aws-sdk");
 AWS.config.update({ region: 'ap-south-1' });
 

@@ -1,8 +1,10 @@
+// Lec(46)Read Operations - Item Level Operations with AWS SDK
 const AWS = require("aws-sdk");
-AWS.config.update({ region: 'us-west-2' });
+AWS.config.update({ region: 'ap-south-1' });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
+//(1)
 // docClient.get({
 //     TableName: 'td_notes_test',
 //     Key: {
@@ -17,6 +19,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 //     }
 // });
 
+//(2)
 // docClient.query({
 //     TableName: 'td_notes_test',
 //     KeyConditionExpression: "user_id = :uid",
@@ -31,6 +34,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 //     }
 // });
 
+
+//(3)
 // docClient.scan({
 //     TableName: 'td_notes_test',
 //     FilterExpression: "cat = :cat",
@@ -46,6 +51,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 // });
 
 
+//(4) Below function is used to get multiple items from multiple tables in a single request. 
+// It is called batchGet operation.
 docClient.batchGet({
     RequestItems: {
         'td_notes_test': {

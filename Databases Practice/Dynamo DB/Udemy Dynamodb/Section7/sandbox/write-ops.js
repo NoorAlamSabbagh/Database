@@ -1,5 +1,7 @@
+// Lec(44)Conditional Write Operations - Item Level Operations with AWS SDK
+
 const AWS = require("aws-sdk");
-AWS.config.update({ region: 'us-west-2' });
+AWS.config.update({ region: 'ap-south-1' });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
@@ -7,7 +9,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 //     TableName: 'td_notes_sdk',
 //     Item: {
 //         user_id: 'bb',
-//         timestamp: 2,
+//         timestamp: 1,
 //         title: 'changed title',
 //         content: 'changed content'
 //     }
@@ -19,6 +21,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 //     }
 // });
 
+
+//(2)
 // docClient.update({
 //     TableName: 'td_notes_sdk',
 //     Key: {
@@ -40,6 +44,8 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 //     }
 // });
 
+
+//(3)
 // docClient.delete({
 //     TableName: 'td_notes_sdk',
 //     Key: {
@@ -55,6 +61,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 // });
 
 
+//(4)
 docClient.batchWrite({
     RequestItems: {
         'td_notes_sdk': [

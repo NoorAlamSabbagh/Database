@@ -1,5 +1,6 @@
+// /Lec(44)Conditional Write Operations - Item Level Operations with AWS SDKconst AWS = require("aws-sdk");
 const AWS = require("aws-sdk");
-AWS.config.update({ region: 'us-west-2' });
+AWS.config.update({ region: 'ap-south-1' });
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 

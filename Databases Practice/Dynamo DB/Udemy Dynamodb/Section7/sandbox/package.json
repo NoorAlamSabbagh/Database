@@ -10,6 +10,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "aws-sdk": "^2.1693.0"
+    "async": "^3.2.6",
+    "aws-sdk": "^2.1693.0",
+    "underscore": "^1.13.8"
   }
 }
