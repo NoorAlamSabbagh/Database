@@ -1,3 +1,6 @@
+// Lec(47)Paginated Read - Item Level Operations with AWS SDK
+// below function is used to get multiple items from a table in a single request.
+
 const async = require("async");
 const _ = require("underscore");
 const AWS = require("aws-sdk");
@@ -62,3 +65,65 @@ async.doWhilst(
         }
     }
 );
+
+//
+//(2)
+// const AWS = require("aws-sdk");
+
+// AWS.config.update({ region: "ap-south-1" });
+
+// const docClient = new AWS.DynamoDB.DocumentClient();
+
+// let startKey = undefined;
+// let results = [];
+// let pages = 0;
+
+// function scanPage(callback) {
+//     const params = {
+//         TableName: "td_notes_test",
+//         Limit: 3
+//     };
+
+//     if (startKey) {
+//         params.ExclusiveStartKey = startKey;
+//     }
+
+//     docClient.scan(params, (err, data) => {
+//         if (err) {
+//             callback(err);
+//             return;
+//         }
+
+//         console.log(`Page ${pages + 1}:`, data.Items);
+
+//         results = results.concat(data.Items);
+//         startKey = data.LastEvaluatedKey;
+//         pages++;
+
+//         callback(null);
+//     });
+// }
+
+// function nextPage() {
+//     return startKey !== undefined;
+// }
+
+// function runPagination() {
+//     scanPage((err) => {
+//         if (err) {
+//             console.log(err);
+//             return;
+//         }
+
+//         if (nextPage()) {
+//             runPagination();
+//         } else {
+//             console.log("\nAll Items:");
+//             console.log(results);
+//             console.log("Item Count:", results.length);
+//             console.log("Pages:", pages);
+//         }
+//     });
+// }
+
+// runPagination();
