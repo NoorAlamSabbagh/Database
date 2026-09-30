@@ -330,3 +330,88 @@
 // For your TCS interview, remember this one line:
 // >Query narrows what DynamoDB reads; FilterExpression narrows what DynamoDB returns.
 
+//Lec(54)DynamoDB Limits
+// Capacity and throughput Limits
+// 4KB per RCU
+// 1KB per WCU 
+// 10GB per partition 
+// 3000 RCUs or 1000 WCUs per partition 
+// Minimum 1RCU and 1 WCU per table or index
+
+// Index and Attribute Limits
+// . 5 local secondary indexes per table
+// . 5 global secondary indexes per table
+// . Max 20 user-specified projected attributes across all secondary
+//   indexes of the table
+// . Max size of partition key = 2 KB
+// . Max size of sort key = 1 KB
+// . Max size of all items per partition key = 10 GB (Including all LSIs)
+// . Max size of a table item = 400 KB
+// . For nested attributes, max possible nesting is 32 levels deep
+
+//
+// API Limits
+// . Max 10 simultaneous requests for table-level operations
+//   (CreateTable, UpdateTable, and DeleteTable)
+// · Max 100 items (up to 16 MB in size) returned per
+// BatchGetltem request
+// . Max 25 Putltem or Deleteltem requests (up to 16 MB in
+//   size) per BatchWriteltem request
+// . Max 1 MB data returned per query or scan request
+
+
+//Lec(55)Error Handling in DynamoDB
+// Exceptions in DynamoDB
+// (1)Access Denied Exception
+// (2)Conditional Check Failed Exception
+// (3)Item Collection, Size Limit, Exceeded, Exception
+// (4)Limit Exceeded Exception
+// (5)Resource In Use Exception
+// (6)Validation Exception
+// (7)Provisioned Throughput Exceeded Exception
+
+//Lec(56)DynamoDB Practices
+// Uniform Data Access
+// Provisioned Capacity:
+// R = 50 RCUs
+// W = 50 WCUs
+
+// Number of Partitions:
+// N= 5
+
+// Capacity per Partition
+// R/N = 50 / 5 = 10 RCUs
+
+//
+// Split Large Attributes Across Items
+
+// Partition Key --> article_id      content
+
+//                    A1             Video provides a powerful way to help you prove your point.
+//                                   When you click Online Video, you can paste in the embed
+//                                   code for the video you want to add. You can also type a ...
+
+// Articles Table
+
+//                     A2            To make your document look professionally produced, Word
+//                                   provides header, footer, cover page, and text box designs
+//                                   that complement each other. For example, you can add ...
+
+//                     A3
+
+//Lec(57)DynamoDB Best Practice(2)
+Best Practice for Read Operations 
+(1)Avoid Scans 
+(2)Avoid Filters
+(3)Use Eventual Consistency
+
+Best practice for LSIs:
+(1)Use LSIs Sparingly 
+(2)Project Fewer Attributes
+(3)Use Sparse Indexes
+(4)Watch for Expanding Item Collections
+
+
+
+
+
