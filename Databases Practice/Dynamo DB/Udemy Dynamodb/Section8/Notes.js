@@ -400,17 +400,35 @@
 //                     A3
 
 //Lec(57)DynamoDB Best Practice(2)
-Best Practice for Read Operations 
-(1)Avoid Scans 
-(2)Avoid Filters
-(3)Use Eventual Consistency
+// Best Practice for Read Operations 
+// (1)Avoid Scans 
+// (2)Avoid Filters
+// (3)Use Eventual Consistency
 
-Best practice for LSIs:
-(1)Use LSIs Sparingly 
-(2)Project Fewer Attributes
-(3)Use Sparse Indexes
-(4)Watch for Expanding Item Collections
+// Best practice for LSIs:
+// (1)Use LSIs Sparingly 
+// (2)Project Fewer Attributes
+// (3)Use Sparse Indexes
+// (4)Watch for Expanding Item Collections
 
+//Best Practice for GSIs
+// (1)Design for Uniform Worklaods
+// (2)Use Spare Indexes
+// (3)Project Fewer Attributes
+// (4)Eventully Consistent Read Replicas
+
+//Lec(58)Way To Lower DynamoDB Costs
+// Optimizing DynamoDB Costs
+// (1)Use Sparse Indexes
+// (2)Project Fewer Attributes
+// (3)Design for Uniform Workloads
+// (4)Use Compression
+// (5)Avoid Scans and Filters
+// (6)Archive Old Data
+// (7)Use Eventual Consistency
+// (8)Choose Low-Cost Region
+// (9)Use Auto-Scaling
+// (10)Leverage Reserved Capcity
 
 
 
