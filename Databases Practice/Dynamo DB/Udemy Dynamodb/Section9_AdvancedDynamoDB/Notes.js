@@ -31,4 +31,20 @@
 // Kinesis Streams can also be used to process DynamoDB Streams. 
 //Kinesis is a plateform for streaming data on AWS. It can be used to collect, process, and analyze real-time data streams. Kinesis Streams can be used to process DynamoDB Streams for more complex processing needs.
 
+//Lec62_Time to Live (TTL) in DynamoDB
+// Time to Live (TTL) = mechanism to automatically delete expired items from a DynamoDB table.
+// TTL is based on a timestamp attribute in the item.
+// TTL Attribute
+// . Defines expiry timestamp of the table item (EPOCH or UNIX
+// timestamp)
+// . Items marked for deletion on expiry
+// . Expired items are removed from the table and indexes
+// within about 48 hrs
+// . Application should use filter operations to exclude items
+// marked for deletion
+
+//
+//Lec63: Global Tables in DynamoDB
+// Global Tables = multi-region, fully replicated DynamoDB tables.
+// Global Tables provide automatic replication of data across multiple AWS regions.
 
