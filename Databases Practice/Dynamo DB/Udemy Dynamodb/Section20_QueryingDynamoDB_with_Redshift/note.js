@@ -1,10 +1,10 @@
-// // Lec83: Exporting DynamoDB Data using dataPipeline
-// ### DynamoDB Data Pipeline — Short Notes
-// AWS Data Pipeline is a service for moving and processing data between AWS services.
-// * It can be used to export DynamoDB data to other AWS services such as Amazon S3.
-// * Useful for backup, analysis, and data migration.
+// // Lec85: Creating Redshift Clusters
+// ### Redshift — Short Notes
+// Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud.
+// * It is based on PostgreSQL and is optimized for analytics workloads.
+// * Useful for data warehousing, business intelligence, and complex queries.
 // * A typical flow:
-// DynamoDB → AWS Data Pipeline → S3
+// DynamoDB → AWS Data Pipeline → S3 → Redshift
 
 // Remember:
-// Data Pipeline = automate data movement between AWS services.
+// Redshift = fully managed data warehouse service for analytics.
